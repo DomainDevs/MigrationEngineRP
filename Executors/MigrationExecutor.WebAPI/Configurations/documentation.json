@@ -1,0 +1,11 @@
+{
+  "SwaggerSettings": {
+    "Enable": true,
+    "Title": "Sistran.MigrationEngine",
+    "Version1": "v1",
+    "Version2": "v2",
+    "Description": "MigrationEngine V1.0.0",
+    "Contact": ": Sistran",
+    "ContactEmail": "sistran@sistran.com.co, dfperez@sistran.com.co"
+  }
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="DESKTOP-O7N0ROR.AdventureWorks2019.sqluser"
+  DTS:DTSID="{B96A0C45-A52C-4977-88DC-423967FE26FD}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=DESKTOP-O7N0ROR;User ID=sqluser;Initial Catalog=AdventureWorks2019;Provider=SQLNCLI11.1;Application Name=SSIS-MigracionSISE-{B96A0C45-A52C-4977-88DC-423967FE26FD}DESKTOP-O7N0ROR.AdventureWorks2019.sqluser;Auto Translate=False;">
+      <DTS:Password
+        DTS:Name="Password"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAqeJUbC8LZ0KU9DBioXLbfQAAAAACAAAAAAAQZgAAAAEAACAAAABT4yv8gdaCXqWDFDkwXSah1oKD25/LeOLk+yHI8aFr2gAAAAAOgAAAAAIAACAAAABCOFGKv9fcyDLGio1xX6/S8l7leNgxerJNdladYNIinIAAAAAnv3WexHyqVjtcGGCkm0l1P1YY8j7sroIyecix74pFyzlMRS5u5SolwWyKbH+smrp17M7nUmhlIpp+mo/1zf46vaWWeWMwC6jjCkWEtTx7mw1mSu7nJ8tL3gmah+CusmfPccl/2dZwvejDXmE9QbRKuQ91pPJL400fPB7XvfSll0AAAABOohacCVKkHRqyfz3twxZ5fCoLdcaI0B1MEd7pf65IKfuOgVzDGYd+gjsU6VdcAJwnbInR/vP1yMLzsHKR+r9X</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

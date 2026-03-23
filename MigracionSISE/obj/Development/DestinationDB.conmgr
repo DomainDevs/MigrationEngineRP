@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="DestinationDB"
+  DTS:DTSID="{95B54F1B-E488-4C47-8CE0-33C2C9BFC39D}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=DESKTOP-O7N0ROR;User ID=sqluser;Initial Catalog=PruebasMigracion2;Provider=SQLNCLI11.1;Persist Security Info=True;Application Name=SSIS-MigracionSISE-{95B54F1B-E488-4C47-8CE0-33C2C9BFC39D}DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1 1;Auto Translate=False;">
+      <DTS:Password
+        DTS:Name="Password"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAqeJUbC8LZ0KU9DBioXLbfQAAAAACAAAAAAAQZgAAAAEAACAAAACn3sinxPN9dFYT7Km3PaIJqgsstjSvXhbEMnmXaoHxEAAAAAAOgAAAAAIAACAAAACLqmc6g+sGYtob4zeDOWSo2pIEhe1PamI4juz0drzx14AAAAAspsgwRiobNXuv5lgWc/prWyimDa6bhuVDjaBVk78ZmyXEHrBNg+VhLjztcaDiuZFk4uqqEZaBx1wBGZFzbj6idBIe/T1BAtwEwRjd+sB+g7Afu4NDS9goK8rjIP4e07FN882ifJtoQ6LAp69pf/hhqi+boFVOEWj3Voy74aJGGkAAAACLkSvdNxv23jUt3TOIHaW23AGSApdcVjJnd9mbQAINu7TCBF75Wpgci14GCZUFrCmcyPcfp+49sKt91b6iJCJP</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

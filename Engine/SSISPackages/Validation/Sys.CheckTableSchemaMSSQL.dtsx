@@ -1,0 +1,115 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="3/7/2026 2:35:52 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-O7N0ROR"
+  DTS:CreatorName="DESKTOP-O7N0ROR\admin"
+  DTS:DTSID="{5BC363B8-3086-49D5-8405-EFE97185D632}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="17.0.1010.2"
+  DTS:LocaleID="8192"
+  DTS:ObjectName="Package1"
+  DTS:PackageType="5"
+  DTS:VersionBuild="4"
+  DTS:VersionGUID="{4DF3497F-3AA6-45B5-88DC-546F8EE8E2DA}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{56822BB8-9D54-4637-829F-E3055C5517CB}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="ExcelPath">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{4AA1E3D3-EFC9-4D8F-B608-842930C21F55}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="MigrationMode">
+      <DTS:VariableValue
+        DTS:DataType="8">Create/Alter</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{91C03777-B0FB-48C1-9438-A4500DAC5837}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="Name">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{E76CEA38-D0DC-4922-918B-0588F5FC904B}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="SchemaName">
+      <DTS:VariableValue
+        DTS:DataType="8">dbo</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Tarea Ejecutar SQL"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Tarea Ejecutar SQL"
+      DTS:DTSID="{73A03F39-902A-475B-BA51-0BB7476BEB97}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea Ejecutar SQL"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:SqlStatementSource="SELECT&#xA;    s.name AS SchemaName,&#xA;    t.name AS TableName,&#xA;    c.name AS ColumnName,&#xA;    ty.name AS DataType,&#xA;    CASE &#xA;        WHEN c.max_length = -1 THEN 'MAX'&#xA;        WHEN ty.name IN ('nvarchar','nchar') THEN CAST(c.max_length / 2 AS VARCHAR(10))&#xA;        ELSE CAST(c.max_length AS VARCHAR(10))&#xA;    END AS MaxLength,&#xA;    c.precision AS Precision,&#xA;    c.scale AS Scale,&#xA;    CASE WHEN c.is_nullable = 1 THEN 'YES' ELSE 'NO' END AS IsNullable,&#xA;    CASE WHEN c.is_identity = 1 THEN 'YES' ELSE 'NO' END AS IsIdentity,&#xA;    CASE WHEN c.is_computed = 1 THEN 'YES' ELSE 'NO' END AS IsComputed,&#xA;    c.collation_name AS Collation,&#xA;    dc.definition AS DefaultValue,&#xA;&#xA;    -- Primary Key&#xA;    CASE WHEN pk.column_id IS NOT NULL THEN 'YES' ELSE 'NO' END AS IsPrimaryKey,&#xA;    pk.constraint_name AS PrimaryKeyName,&#xA;&#xA;    -- Foreign Key&#xA;    rt.name AS ForeignTable,&#xA;    rc.name AS ForeignColumn,&#xA;    fkref.name AS ForeignKeyName,&#xA;    fkref.delete_referential_action_desc AS FK_DeleteAction,&#xA;    fkref.update_referential_action_desc AS FK_UpdateAction,&#xA;    fkref.is_disabled AS FK_IsDisabled,&#xA;    fkref.is_not_trusted AS FK_IsNotTrusted&#xA;FROM sys.schemas s&#xA;INNER JOIN sys.tables t ON t.schema_id = s.schema_id&#xA;INNER JOIN sys.columns c ON c.object_id = t.object_id&#xA;INNER JOIN sys.types ty ON c.user_type_id = ty.user_type_id&#xA;LEFT JOIN sys.default_constraints dc ON c.default_object_id = dc.object_id&#xA;-- Primary Key&#xA;LEFT JOIN (&#xA;    SELECT ic.object_id, ic.column_id, i.name AS constraint_name&#xA;    FROM sys.indexes i&#xA;    INNER JOIN sys.index_columns ic &#xA;        ON i.object_id = ic.object_id &#xA;        AND i.index_id = ic.index_id&#xA;    WHERE i.is_primary_key = 1&#xA;) pk ON pk.object_id = c.object_id AND pk.column_id = c.column_id&#xA;-- Foreign Key&#xA;LEFT JOIN sys.foreign_key_columns fk &#xA;    ON fk.parent_object_id = c.object_id &#xA;    AND fk.parent_column_id = c.column_id&#xA;LEFT JOIN sys.tables rt &#xA;    ON fk.referenced_object_id = rt.object_id&#xA;LEFT JOIN sys.columns rc &#xA;    ON fk.referenced_object_id = rc.object_id &#xA;    AND fk.referenced_column_id = rc.column_id&#xA;LEFT JOIN sys.foreign_keys fkref &#xA;    ON fk.constraint_object_id = fkref.object_id&#xA;ORDER BY s.name, t.name, c.column_id;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Tarea Flujo de datos"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Tarea Flujo de datos"
+      DTS:DTSID="{6B1D4ECA-017B-4D0C-AE9D-E2751C8ABD65}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea Flujo de datos"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--Esta sección CDATA contiene la información de diseño del paquete. Esta sección incluye información como, por ejemplo, las coordenadas (x,y), el ancho y el alto.-->
+<!--Si edita manualmente esta sección y comete un error, puede eliminarlo. -->
+<!--El paquete podrá cargarse normalmente, pero se perderá la información de diseño anterior y el diseñador reorganizará los elementos automáticamente en la superficie de diseño.-->
+<Objects
+  Version="8">
+  <!--Cada uno de los nodos siguientes contiene propiedades que no afectan al comportamiento en tiempo de ejecución.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="180,42"
+          Id="Package\Tarea Flujo de datos"
+          TopLeft="307,178" />
+        <NodeLayout
+          Size="176,42"
+          Id="Package\Tarea Ejecutar SQL"
+          TopLeft="312,85" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
