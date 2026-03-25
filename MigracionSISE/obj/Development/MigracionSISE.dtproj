@@ -34,7 +34,6 @@
           <SSIS:Package SSIS:Name="0002_Polizas.dtsx" SSIS:EntryPoint="1" />
           <SSIS:Package SSIS:Name="0003_PolizaRiesgos.dtsx" SSIS:EntryPoint="1" />
           <SSIS:Package SSIS:Name="Sys.CheckTableSchemaMSSQL.dtsx" SSIS:EntryPoint="1" />
-          <SSIS:Package SSIS:Name="0004_Performance.dtsx" SSIS:EntryPoint="1" />
         </SSIS:Packages>
         <SSIS:ConnectionManagers>
           <SSIS:ConnectionManager SSIS:Name="SourceDB.conmgr" />
@@ -615,23 +614,6 @@
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionGUID">{8D07468D-E111-4093-B0F7-0C799216126E}</SSIS:Property>
-                <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
-                <SSIS:Property SSIS:Name="Description">
-                </SSIS:Property>
-                <SSIS:Property SSIS:Name="ProtectionLevel">1</SSIS:Property>
-              </SSIS:Properties>
-              <SSIS:Parameters />
-            </SSIS:PackageMetaData>
-            <SSIS:PackageMetaData SSIS:Name="0004_Performance.dtsx">
-              <SSIS:Properties>
-                <SSIS:Property SSIS:Name="ID">{13C7A337-A64D-42EC-9963-41BE86122857}</SSIS:Property>
-                <SSIS:Property SSIS:Name="Name">0004_Performance</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">6</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionComments">
-                </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{AFF6A2E1-6ED9-42CC-BB63-E61F64B673D0}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
