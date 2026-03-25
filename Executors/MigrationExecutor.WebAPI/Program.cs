@@ -1,4 +1,5 @@
-﻿using Engine;
+﻿using Core.Entities;
+using Engine;
 using Infrastructure;
 using Infrastructure.Documentation; // <- para AddConfiguredSwagger
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using MigrationExecutor.WebAPI.Hubs;
+
+//using MigrationExecutor.WebAPI.Hubs;
 using MigrationExecutor.WebAPI.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +40,8 @@ builder.Services.AddDirectoryBrowser(); // mostrar archivos
 
 var app = builder.Build();
 app.UseInfrastructure(builder.Configuration);
+//app.MapHub<MigrationHub>("/migrationHub");
+// Mapea tu Hub
 app.MapHub<MigrationHub>("/migrationHub");
 
 // mostrar archivos

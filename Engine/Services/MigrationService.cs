@@ -1,10 +1,5 @@
 ﻿using Core.Entities;
 using Infrastructure.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
 
 namespace Engine.Services
 {
@@ -12,6 +7,14 @@ namespace Engine.Services
     {
         private readonly ILogWriterMD _mdWriter;
         private readonly ILogWriterJSON _jsonWriter;
+
+        // Evento público que notificará progreso
+        public event EventHandler<MigrationProgressEventArgs>? OnProgressChanged;
+
+        // ⚡ Estado global
+        private static int _isRunning = 0; // 0 = libre, 1 = en ejecución
+        private static readonly object _lock = new object();
+        private static MigrationJob? _currentJob; // Job en ejecución, accesible a otros clientes
 
         public MigrationService(ILogWriterMD mdWriter, ILogWriterJSON jsonWriter)
         {
@@ -61,23 +64,67 @@ namespace Engine.Services
             return logEntry;
         }
 
-        public void EjecutarJob(MigrationJob job)
+        public bool EjecutarJob(MigrationJob job)
         {
             if (job == null) throw new ArgumentNullException(nameof(job));
-            if (job.Pasos == null || job.Pasos.Count == 0) return;
+            if (job.Pasos == null || job.Pasos.Count == 0) return false;
 
-            job.FechaEjecucion = DateTime.Now;
+            // 🔒 Bloqueo global para evitar doble ejecución
+            lock (_lock)
+            {
+                if (Interlocked.CompareExchange(ref _isRunning, 1, 0) != 0)
+                {
+                    // Ya hay un job en ejecución
+                    return false;
+                }
 
-            var logs = job.Pasos.Select(EjecutarPaso).ToList();
-            job.Completado = job.Pasos.All(p => p.Exito);
+                _currentJob = job;
+            }
 
-            // Generar ambos logs
-            _mdWriter.EscribirLog(job.Nombre, logs);
-            _jsonWriter.EscribirLog(job.Nombre, logs);
+            try
+            {
+                job.FechaEjecucion = DateTime.Now;
+                var logs = new List<LogEntry>();
+                int totalSteps = job.Pasos.Count;
 
-            // Mostrar resumen final
-            MostrarResumen(job, logs);
+                for (int i = 0; i < totalSteps; i++)
+                {
+                    var step = job.Pasos[i];
+                    var log = EjecutarPaso(step);
+                    logs.Add(log);
+
+                    // Disparar evento de progreso
+                    OnProgressChanged?.Invoke(this, new MigrationProgressEventArgs
+                    {
+                        Progress = ((i + 1) * 100.0) / totalSteps,
+                        StepName = step.Nombre,
+                        Job = job
+                    });
+                }
+
+                job.Completado = job.Pasos.All(p => p.Exito);
+
+                // Generar logs
+                _mdWriter.EscribirLog(job.Nombre, logs);
+                _jsonWriter.EscribirLog(job.Nombre, logs);
+
+                // Mostrar resumen final
+                MostrarResumen(job, logs);
+
+                return true;
+            }
+            finally
+            {
+                lock (_lock)
+                {
+                    _currentJob = null;
+                    Interlocked.Exchange(ref _isRunning, 0); // liberar ejecución
+                }
+            }
         }
+
+        // Permite consultar el job actual desde otro cliente
+        public MigrationJob? GetCurrentJob() => _currentJob;
 
         public void EjecutarJobDesdeCarpeta(
             string nombreJob,
@@ -102,16 +149,7 @@ namespace Engine.Services
                     .ToList();
 
                 if (omitidosNoEncontrados.Any())
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n[ERROR] Algunos paquetes a omitir no existen:");
-                    foreach (var p in omitidosNoEncontrados)
-                        Console.WriteLine($" - {p}");
-                    Console.ResetColor();
-
-                    throw new FileNotFoundException(
-                        $"Paquetes a omitir no encontrados: {string.Join(", ", omitidosNoEncontrados)}");
-                }
+                    throw new FileNotFoundException($"Paquetes a omitir no encontrados: {string.Join(", ", omitidosNoEncontrados)}");
             }
 
             // Filtrar paquetesIncluir
@@ -122,16 +160,7 @@ namespace Engine.Services
                     .ToList();
 
                 if (paquetesNoEncontrados.Any())
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n[ERROR] Algunos paquetes a incluir no existen:");
-                    foreach (var p in paquetesNoEncontrados)
-                        Console.WriteLine($" - {p}");
-                    Console.ResetColor();
-
-                    throw new FileNotFoundException(
-                        $"Paquetes a incluir no encontrados: {string.Join(", ", paquetesNoEncontrados)}");
-                }
+                    throw new FileNotFoundException($"Paquetes a incluir no encontrados: {string.Join(", ", paquetesNoEncontrados)}");
 
                 archivosDisponibles = archivosDisponibles
                     .Where(f => paquetesIncluir.Contains(Path.GetFileName(f), StringComparer.OrdinalIgnoreCase))
@@ -147,12 +176,7 @@ namespace Engine.Services
             }
 
             if (archivosDisponibles.Length == 0)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\n[ERROR] No hay paquetes válidos para ejecutar.");
-                Console.ResetColor();
-                return;
-            }
+                throw new InvalidOperationException("No hay paquetes válidos para ejecutar.");
 
             var pasos = archivosDisponibles.Select(a => new MigrationStep
             {
@@ -189,5 +213,13 @@ namespace Engine.Services
             Console.WriteLine($"\nEstado final del Job: {(job.Completado ? "[OK]" : "[FAIL]")}");
             Console.ResetColor();
         }
+    }
+
+    // Argumentos de progreso
+    public class MigrationProgressEventArgs : EventArgs
+    {
+        public double Progress { get; set; }
+        public string StepName { get; set; } = string.Empty;
+        public MigrationJob? Job { get; set; }
     }
 }

@@ -148,10 +148,15 @@
                         <i class="bi bi-speedometer text-blue-600 text-2xl"></i>
                         <h3 class="font-semibold text-gray-800">Progress</h3>
                     </div>
-                    <p class="text-gray-500 text-sm mb-4">Informe de progreso...</p>
+                    <p class="text-gray-500 text-sm mb-4">Informe de progreso de la migración en tiempo real:</p>
 
-
+                    <!-- Barra de progreso -->
+                    <div class="w-full bg-gray-200 rounded-full h-5 mb-2 overflow-hidden">
+                        <div id="progressBar" class="bg-blue-600 h-5 w-0 transition-all"></div>
+                    </div>
+                    <p id="progressText" class="text-sm text-gray-700">0%</p>
                 </div>
+
             </section>
 
             <!-- LOGS -->
@@ -389,6 +394,34 @@
                 statusMsg.className = "mt-2 text-sm text-red-500";
             }
         });
+
+
+        //====================================USO DE WASM====================================
+        // Crear conexión SignalR
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/migrationHub")
+            .withAutomaticReconnect()
+            .build();
+
+        // Elementos de progreso
+        const progressBar = document.getElementById("progressBar");
+        const progressText = document.getElementById("progressText");
+
+        // Función para actualizar la barra
+        function updateProgress(progress, stepName) {
+            progressBar.style.width = progress + "%";
+            progressText.textContent = `${progress.toFixed(0)}% - ${stepName}`;
+        }
+
+        // Conexión a eventos desde el servidor
+        connection.on("ReceiveProgress", (progress, stepName) => {
+            updateProgress(progress, stepName);
+        });
+
+        // Iniciar conexión
+        connection.start()
+            .then(() => console.log("Conectado a MigrationHub"))
+            .catch(err => console.error(err.toString()));
     </script>
 
 </body>
