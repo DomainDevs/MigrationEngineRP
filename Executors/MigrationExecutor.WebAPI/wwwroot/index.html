@@ -415,7 +415,8 @@
 
         // Conexión a eventos desde el servidor
         connection.on("ReceiveProgress", (progress, stepName) => {
-            updateProgress(progress, stepName);
+            progressBar.style.width = progress + "%";
+            progressText.textContent = `${progress.toFixed(0)}% - ${stepName}`;
         });
 
         // Iniciar conexión
