@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Engine;
+using Engine.Services;
 using Infrastructure;
 using Infrastructure.Documentation; // <- para AddConfiguredSwagger
 using Microsoft.AspNetCore.Builder;
@@ -34,7 +35,7 @@ builder.Services.AddEngineServices(); // Registrar Engine
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddSignalR(); ///Adicionar AddSignalR
 
 builder.Services.AddDirectoryBrowser(); // mostrar archivos
 

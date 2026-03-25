@@ -25,18 +25,13 @@ namespace Engine.Services
         private LogEntry EjecutarPaso(MigrationStep step)
         {
             step.Inicio = DateTime.Now;
-            var logEntry = new LogEntry
-            {
-                NombrePaso = step.Nombre,
-                Inicio = step.Inicio
-            };
+            var logEntry = new LogEntry { NombrePaso = step.Nombre, Inicio = step.Inicio };
 
             try
             {
                 // Aquí se ejecutaría el paquete SSIS
                 step.Exito = true;
                 step.Mensaje = "Paso ejecutado correctamente";
-
                 logEntry.Exito = true;
                 logEntry.Mensaje = step.Mensaje;
 
@@ -47,7 +42,6 @@ namespace Engine.Services
             {
                 step.Exito = false;
                 step.Mensaje = ex.Message;
-
                 logEntry.Exito = false;
                 logEntry.Mensaje = ex.Message;
 
@@ -69,7 +63,6 @@ namespace Engine.Services
             if (job == null) throw new ArgumentNullException(nameof(job));
             if (job.Pasos == null || job.Pasos.Count == 0) return false;
 
-            // 🔒 Bloqueo global para evitar doble ejecución
             lock (_lock)
             {
                 if (Interlocked.CompareExchange(ref _isRunning, 1, 0) != 0)
@@ -77,7 +70,6 @@ namespace Engine.Services
                     // Ya hay un job en ejecución
                     return false;
                 }
-
                 _currentJob = job;
             }
 
@@ -132,11 +124,8 @@ namespace Engine.Services
             List<string>? paquetesIncluir = null,
             List<string>? paquetesOmitir = null)
         {
-            if (string.IsNullOrWhiteSpace(nombreJob))
-                throw new ArgumentException("Nombre del job requerido.", nameof(nombreJob));
-
-            if (!Directory.Exists(carpetaPaquetes))
-                throw new DirectoryNotFoundException($"La carpeta {carpetaPaquetes} no existe.");
+            if (string.IsNullOrWhiteSpace(nombreJob)) throw new ArgumentException("Nombre del job requerido.", nameof(nombreJob));
+            if (!Directory.Exists(carpetaPaquetes)) throw new DirectoryNotFoundException($"La carpeta {carpetaPaquetes} no existe.");
 
             var archivosDisponibles = Directory.GetFiles(carpetaPaquetes, "*.dtsx");
             var nombresDisponibles = archivosDisponibles.Select(f => Path.GetFileName(f)).ToList();
@@ -178,11 +167,9 @@ namespace Engine.Services
             if (archivosDisponibles.Length == 0)
                 throw new InvalidOperationException("No hay paquetes válidos para ejecutar.");
 
-            var pasos = archivosDisponibles.Select(a => new MigrationStep
-            {
-                Nombre = Path.GetFileNameWithoutExtension(a),
-                RutaPaquete = a
-            }).ToList();
+            var pasos = archivosDisponibles
+                .Select(a => new MigrationStep { Nombre = Path.GetFileNameWithoutExtension(a), RutaPaquete = a })
+                .ToList();
 
             var job = new MigrationJob
             {
@@ -205,8 +192,8 @@ namespace Engine.Services
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Total pasos: {logs.Count}");
-            Console.WriteLine($"Éxitos:      {exitos}");
-            Console.WriteLine($"Fallidos:    {fallidos}");
+            Console.WriteLine($"Éxitos: {exitos}");
+            Console.WriteLine($"Fallidos: {fallidos}");
             Console.ResetColor();
 
             Console.ForegroundColor = job.Completado ? ConsoleColor.Green : ConsoleColor.Red;
