@@ -39,7 +39,7 @@ try
             Directory.CreateDirectory(logsPath);
 
             services.AddInfrastructureServices(context.Configuration, logsPath);
-            services.AddEngineServices();
+            services.AddEngineServices(logsPath);
         })
         .Build();
 

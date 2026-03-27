@@ -11,7 +11,7 @@ public static class AddEngineExtension
     /// </summary>
     /// <param name="services">Contenedor de servicios</param>
     /// <returns>El contenedor de servicios actualizado</returns>
-    public static IServiceCollection AddEngineServices(this IServiceCollection services)
+    public static IServiceCollection AddEngineServices(this IServiceCollection services, string rutaLogs)
     {
         // Registramos MigrationService
         // Usamos factory para inyectar ambos loggers desde el contenedor
@@ -19,7 +19,7 @@ public static class AddEngineExtension
         {
             var mdWriter = sp.GetRequiredService<ILogWriterMD>();
             var jsonWriter = sp.GetRequiredService<ILogWriterJSON>();
-            return new Services.MigrationService(mdWriter, jsonWriter);
+            return new Services.MigrationService(mdWriter, jsonWriter, rutaLogs);
         });
 
         return services;

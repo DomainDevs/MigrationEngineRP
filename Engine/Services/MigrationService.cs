@@ -1,5 +1,7 @@
 ﻿using Core.Entities;
 using Infrastructure.Logging;
+using Infrastructure.DTOs;
+using Infrastructure.Reporting;
 
 namespace Engine.Services
 {
@@ -7,19 +9,23 @@ namespace Engine.Services
     {
         private readonly ILogWriterMD _mdWriter;
         private readonly ILogWriterJSON _jsonWriter;
+        private readonly MigrationReportExcelWriter _reportWriter;
 
         // Evento público que notificará progreso
         public event EventHandler<MigrationProgressEventArgs>? OnProgressChanged;
 
-        // ⚡ Estado global
-        private static int _isRunning = 0; // 0 = libre, 1 = en ejecución
+        // Estado global
+        private static int _isRunning = 0;
         private static readonly object _lock = new object();
-        private static MigrationJob? _currentJob; // Job en ejecución, accesible a otros clientes
+        private static MigrationJob? _currentJob;
 
-        public MigrationService(ILogWriterMD mdWriter, ILogWriterJSON jsonWriter)
+        public MigrationService(ILogWriterMD mdWriter, ILogWriterJSON jsonWriter, string reportsOutputFolder)
         {
             _mdWriter = mdWriter ?? throw new ArgumentNullException(nameof(mdWriter));
             _jsonWriter = jsonWriter ?? throw new ArgumentNullException(nameof(jsonWriter));
+
+            // Instanciamos el escritor de reportes usando la carpeta de salida
+            _reportWriter = new MigrationReportExcelWriter(reportsOutputFolder);
         }
 
         private LogEntry EjecutarPaso(MigrationStep step)
@@ -29,7 +35,7 @@ namespace Engine.Services
 
             try
             {
-                // Aquí se ejecutaría el paquete SSIS
+                // Aquí se ejecutaría el paquete SSIS o lógica del paso
                 step.Exito = true;
                 step.Mensaje = "Paso ejecutado correctamente";
                 logEntry.Exito = true;
@@ -53,6 +59,14 @@ namespace Engine.Services
                 Console.ResetColor();
                 step.Fin = DateTime.Now;
                 logEntry.Fin = step.Fin;
+
+                // 🔹 Siempre dispara progreso aunque haya fallo
+                OnProgressChanged?.Invoke(this, new MigrationProgressEventArgs
+                {
+                    Progress = 0, // progresión parcial se maneja en EjecutarJob
+                    StepName = step.Nombre,
+                    Job = _currentJob
+                });
             }
 
             return logEntry;
@@ -66,10 +80,8 @@ namespace Engine.Services
             lock (_lock)
             {
                 if (Interlocked.CompareExchange(ref _isRunning, 1, 0) != 0)
-                {
-                    // Ya hay un job en ejecución
-                    return false;
-                }
+                    return false; // Ya hay un job ejecutándose
+
                 _currentJob = job;
             }
 
@@ -85,23 +97,49 @@ namespace Engine.Services
                     var log = EjecutarPaso(step);
                     logs.Add(log);
 
-                    // Disparar evento de progreso
+                    double progress = ((i + 1) * 100.0) / totalSteps;
+
+                    // Disparar evento principal de progreso
                     OnProgressChanged?.Invoke(this, new MigrationProgressEventArgs
                     {
-                        Progress = ((i + 1) * 100.0) / totalSteps,
+                        Progress = progress,
                         StepName = step.Nombre,
-                        Job = job
+                        Job = job,
+                        
                     });
                 }
 
                 job.Completado = job.Pasos.All(p => p.Exito);
 
-                // Generar logs
                 _mdWriter.EscribirLog(job.Nombre, logs);
                 _jsonWriter.EscribirLog(job.Nombre, logs);
 
-                // Mostrar resumen final
                 MostrarResumen(job, logs);
+                //============================ <REPORTE> ============================
+
+                // 1️⃣ Mapear a DTO para Excel
+                var reportDto = new MigrationJobReportDto
+                {
+                    JobId = job.Id.ToString(),
+                    Steps = job.Pasos.Select((s, index) => new MigrationStepReportDto
+                    {
+                        StepId = index + 1,
+                        StepName = s.Nombre,
+                        Status = s.Exito ? "Success" : "Failed",
+                        RowsProcessed = 0,
+                        StartTime = s.Inicio,
+                        EndTime = s.Fin,
+                        DurationSeconds = (s.Fin - s.Inicio).TotalSeconds,
+                        Message = s.Mensaje
+                    }).ToList()
+                };
+
+                // 2️⃣ Generar Excel
+                // Después de generar el Excel
+                var excelPath = _reportWriter.WriteJobReport(reportDto);
+                Console.WriteLine($"Reporte Excel generado: {excelPath}");
+
+                //============================ </REPORTE> ============================
 
                 return true;
             }
@@ -110,12 +148,11 @@ namespace Engine.Services
                 lock (_lock)
                 {
                     _currentJob = null;
-                    Interlocked.Exchange(ref _isRunning, 0); // liberar ejecución
+                    Interlocked.Exchange(ref _isRunning, 0);
                 }
             }
         }
 
-        // Permite consultar el job actual desde otro cliente
         public MigrationJob? GetCurrentJob() => _currentJob;
 
         public void EjecutarJobDesdeCarpeta(
@@ -130,7 +167,6 @@ namespace Engine.Services
             var archivosDisponibles = Directory.GetFiles(carpetaPaquetes, "*.dtsx");
             var nombresDisponibles = archivosDisponibles.Select(f => Path.GetFileName(f)).ToList();
 
-            // Validar paquetesOmitir
             if (paquetesOmitir != null && paquetesOmitir.Count > 0)
             {
                 var omitidosNoEncontrados = paquetesOmitir
@@ -141,7 +177,6 @@ namespace Engine.Services
                     throw new FileNotFoundException($"Paquetes a omitir no encontrados: {string.Join(", ", omitidosNoEncontrados)}");
             }
 
-            // Filtrar paquetesIncluir
             if (paquetesIncluir != null && paquetesIncluir.Count > 0)
             {
                 var paquetesNoEncontrados = paquetesIncluir
@@ -156,7 +191,6 @@ namespace Engine.Services
                     .ToArray();
             }
 
-            // Excluir paquetesOmitir
             if (paquetesOmitir != null && paquetesOmitir.Count > 0)
             {
                 archivosDisponibles = archivosDisponibles
@@ -201,5 +235,4 @@ namespace Engine.Services
             Console.ResetColor();
         }
     }
-
 }

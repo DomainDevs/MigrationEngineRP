@@ -4,5 +4,5 @@ namespace MigrationExecutor.WebAPI.Hubs;
 
 public class MigrationHub : Hub
 {
-    // No guardar lógica ni eventos aquí.
+    // No necesitas lógica aquí
 }

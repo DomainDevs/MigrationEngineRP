@@ -29,7 +29,7 @@ string basePath = AppContext.BaseDirectory; // ruta del exe o WebAPI
 string rutaLogs = Path.Combine(basePath, builder.Configuration.GetValue<string>("Migration:CarpetaLogs"));
 
 builder.Services.AddInfrastructureServices(builder.Configuration, rutaLogs, true); //Registrar Infraestructura
-builder.Services.AddEngineServices(); // Registrar Engine
+builder.Services.AddEngineServices(rutaLogs); // Registrar Engine
 //builder.Services.AddControllers(); // Registrar controladores
 
 builder.Services.AddControllers();

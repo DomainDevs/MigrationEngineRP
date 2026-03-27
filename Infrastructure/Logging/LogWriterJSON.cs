@@ -40,6 +40,7 @@ namespace Infrastructure.Logging
                 TotalPasos = entradas.Count,
                 Exitos = entradas.Count(e => e.Exito),
                 Fallidos = entradas.Count(e => !e.Exito),
+                ExcelPath = "",
                 Pasos = entradas.ConvertAll(e => new
                 {
                     e.NombrePaso,
