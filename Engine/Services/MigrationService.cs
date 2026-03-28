@@ -75,10 +75,15 @@ namespace Engine.Services
         public void EjecutarJobDesdeCarpeta(
             string nombreJob,
             string carpetaPaquetes,
+            string SourceDB,
+            string DestinationDB,
             List<string>? paquetesIncluir = null,
             List<string>? paquetesOmitir = null)
         {
-            var job = MigrationServiceExtensions.CrearJobDesdeCarpeta(nombreJob, carpetaPaquetes, paquetesIncluir, paquetesOmitir);
+            var job = MigrationServiceExtensions.CrearJobDesdeCarpeta(nombreJob, carpetaPaquetes, SourceDB, DestinationDB,
+                paquetesIncluir, paquetesOmitir);
+
+
             EjecutarJob(job);
         }
 

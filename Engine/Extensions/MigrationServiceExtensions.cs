@@ -168,6 +168,8 @@ namespace Engine.Extensions
         public static MigrationJob CrearJobDesdeCarpeta(
             string nombreJob,
             string carpetaPaquetes,
+            string SourceDB,
+            string DestinationDB,
             List<string>? paquetesIncluir = null,
             List<string>? paquetesOmitir = null)
         {

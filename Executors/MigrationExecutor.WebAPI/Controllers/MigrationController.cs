@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Engine.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -29,6 +30,8 @@ public class MigrationController : ControllerBase
             _migrationService.EjecutarJobDesdeCarpeta(
                 nombreJob: request.Nombre,
                 carpetaPaquetes: _config.CarpetaPaquetes,
+                SourceDB: _config.SourceDB,
+                DestinationDB: _config.DestinationDB,
                 paquetesIncluir: request.PaquetesIncluir,
                 paquetesOmitir: request.PaquetesOmitir
             );
