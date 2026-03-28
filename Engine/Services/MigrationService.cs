@@ -2,6 +2,7 @@
 using Engine.Extensions;
 using Infrastructure.Logging;
 using Infrastructure.Reporting;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Engine.Services
 {
@@ -15,11 +16,16 @@ namespace Engine.Services
         private static readonly object _lock = new object();
         private static MigrationJob? _currentJob;
 
-        public MigrationService(ILogWriterMD mdWriter, ILogWriterJSON jsonWriter, string reportsOutputFolder)
+        private readonly IHubContext<MigrationHub> _hubContext; //Hub
+
+        public MigrationService(ILogWriterMD mdWriter, ILogWriterJSON jsonWriter, string reportsOutputFolder,
+            IHubContext<MigrationHub>? hubContext = null  // <-- nuevo parámetro opcional
+            )
         {
             _mdWriter = mdWriter ?? throw new ArgumentNullException(nameof(mdWriter));
             _jsonWriter = jsonWriter ?? throw new ArgumentNullException(nameof(jsonWriter));
             _reportWriter = new MigrationReportExcelWriter(reportsOutputFolder);
+            _hubContext = hubContext; // <-- asignar
         }
 
         public bool EjecutarJob(MigrationJob job)
@@ -43,7 +49,7 @@ namespace Engine.Services
                 var logs = MigrationServiceExtensions.InicializarLogs(job, excelFileName);
 
                 // Ejecutar pasos
-                logs = MigrationServiceExtensions.EjecutarPasos(job, logs);
+                logs = MigrationServiceExtensions.EjecutarPasos(job, logs, _hubContext);
 
                 job.Completado = job.Pasos.All(p => p.Exito);
 

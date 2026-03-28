@@ -9,9 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using MigrationExecutor.WebAPI.Hubs;
-
-//using MigrationExecutor.WebAPI.Hubs;
 using MigrationExecutor.WebAPI.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,9 +38,13 @@ builder.Services.AddDirectoryBrowser(); // mostrar archivos
 
 var app = builder.Build();
 app.UseInfrastructure(builder.Configuration);
-//app.MapHub<MigrationHub>("/migrationHub");
+
+// Middleware
+app.UseRouting();
+
 // Mapea tu Hub
 app.MapHub<MigrationHub>("/migrationHub");
+
 
 // mostrar archivos
 app.UseFileServer(new FileServerOptions

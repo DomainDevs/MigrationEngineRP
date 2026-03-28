@@ -28,15 +28,19 @@ namespace Engine.Extensions
 
         /// Ejecuta todos los pasos de un MigrationJob
         /// Cada paso se registra en su correspondiente -> LogEntry
-        public static List<LogEntry> EjecutarPasos(MigrationJob job, List<LogEntry> logs)
+        public static List<LogEntry> EjecutarPasos(MigrationJob job, List<LogEntry> logs,
+            IHubContext<MigrationHub> hubContext //Hub
+            )
         {
             for (int i = 0; i < job.Pasos.Count; i++)
             {
                 var step = job.Pasos[i];
                 logs[i] = EjecutarPaso(step, logs[i]);
 
-                //var porcentaje = (i + 1) * 100 / job.Pasos.Count;
-                //MigrationHub.BroadcastProgress(job.Id, porcentaje, step.Nombre);
+                var porcentaje = (i + 1) * 100 / job.Pasos.Count;
+                // Enviar al Hub
+                hubContext.Clients.All.SendAsync("RecibirProgreso", job.Id, porcentaje, step.Nombre);
+
             }
             return logs;
         }
