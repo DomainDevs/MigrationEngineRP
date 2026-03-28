@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
-using Infrastructure.Logging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Infrastructure.DTOs;
+using Infrastructure.Logging;
 using Infrastructure.Reporting;
 
 namespace Engine.Services
@@ -10,9 +11,6 @@ namespace Engine.Services
         private readonly ILogWriterMD _mdWriter;
         private readonly ILogWriterJSON _jsonWriter;
         private readonly MigrationReportExcelWriter _reportWriter;
-
-        // Evento público que notificará progreso
-        public event EventHandler<MigrationProgressEventArgs>? OnProgressChanged;
 
         // Estado global
         private static int _isRunning = 0;
@@ -59,14 +57,6 @@ namespace Engine.Services
                 Console.ResetColor();
                 step.Fin = DateTime.Now;
                 logEntry.Fin = step.Fin;
-
-                // 🔹 Siempre dispara progreso aunque haya fallo
-                OnProgressChanged?.Invoke(this, new MigrationProgressEventArgs
-                {
-                    Progress = 0, // progresión parcial se maneja en EjecutarJob
-                    StepName = step.Nombre,
-                    Job = _currentJob
-                });
             }
 
             return logEntry;
@@ -88,36 +78,42 @@ namespace Engine.Services
             try
             {
                 job.FechaEjecucion = DateTime.Now;
+
+                // ======================== 🔹 Crear nombre de Excel al inicio 🔹 ========================
+                string excelFileName = $"MigrationReport_{job.Id}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                string excelPath = Path.Combine(_reportWriter.OutputFolder, excelFileName);
+                var jobExcelPath = excelPath;
+
+                // ======================== 🔹 Inicializar logs con FileXLS 🔹 ========================
                 var logs = new List<LogEntry>();
+                foreach (var step in job.Pasos)
+                {
+                    logs.Add(new LogEntry
+                    {
+                        NombrePaso = step.Nombre,
+                        Inicio = step.Inicio,
+                        FileXLS = excelFileName // Aquí ya tenemos el nombre asignado
+                    });
+                }
+
                 int totalSteps = job.Pasos.Count;
 
+                // ======================== 🔹 Ejecutar cada paso 🔹 ========================
                 for (int i = 0; i < totalSteps; i++)
                 {
                     var step = job.Pasos[i];
                     var log = EjecutarPaso(step);
-                    logs.Add(log);
+
+                    // Mantener FileXLS en cada log
+                    log.FileXLS = excelFileName;
+                    logs[i] = log;
 
                     double progress = ((i + 1) * 100.0) / totalSteps;
-
-                    // Disparar evento principal de progreso
-                    OnProgressChanged?.Invoke(this, new MigrationProgressEventArgs
-                    {
-                        Progress = progress,
-                        StepName = step.Nombre,
-                        Job = job,
-                        
-                    });
                 }
 
                 job.Completado = job.Pasos.All(p => p.Exito);
 
-                _mdWriter.EscribirLog(job.Nombre, logs);
-                _jsonWriter.EscribirLog(job.Nombre, logs);
-
-                MostrarResumen(job, logs);
-                //============================ <REPORTE> ============================
-
-                // 1️⃣ Mapear a DTO para Excel
+                // ======================== 🔹 Mapear a DTO para Excel 🔹 ========================
                 var reportDto = new MigrationJobReportDto
                 {
                     JobId = job.Id.ToString(),
@@ -134,12 +130,15 @@ namespace Engine.Services
                     }).ToList()
                 };
 
-                // 2️⃣ Generar Excel
-                // Después de generar el Excel
-                var excelPath = _reportWriter.WriteJobReport(reportDto);
-                Console.WriteLine($"Reporte Excel generado: {excelPath}");
+                // ======================== 🔹 Escribir JSON y MD antes de generar Excel 🔹 ========================
+                _jsonWriter.EscribirLog(job.Nombre, logs);
+                _mdWriter.EscribirLog(job.Nombre, logs);
 
-                //============================ </REPORTE> ============================
+                MostrarResumen(job, logs);
+
+                // ======================== 🔹 Generar Excel 🔹 ========================
+                _reportWriter.WriteJobReport(reportDto, excelPath);
+                Console.WriteLine($"Reporte Excel generado: {excelPath}");
 
                 return true;
             }

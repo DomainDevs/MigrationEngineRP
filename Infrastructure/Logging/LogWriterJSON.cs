@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Infrastructure.DTOs;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 
 namespace Infrastructure.Logging
@@ -33,6 +33,9 @@ namespace Infrastructure.Logging
 
             string archivo = Path.Combine(_carpetaBase, $"{nombreArchivo}_{DateTime.Now:yyyyMMdd_HHmmss}.json");
 
+            // Obtenemos el nombre del Excel de la primera entrada si existe
+            string excelPath = entradas.Count > 0 ? entradas[0].FileXLS ?? "" : "";
+
             var reporte = new
             {
                 NombreJob = nombreArchivo,
@@ -40,7 +43,7 @@ namespace Infrastructure.Logging
                 TotalPasos = entradas.Count,
                 Exitos = entradas.Count(e => e.Exito),
                 Fallidos = entradas.Count(e => !e.Exito),
-                ExcelPath = "",
+                ExcelPath = excelPath, // Solo en la raíz
                 Pasos = entradas.ConvertAll(e => new
                 {
                     e.NombrePaso,
@@ -49,6 +52,7 @@ namespace Infrastructure.Logging
                     DuracionSegundos = (e.Fin - e.Inicio).TotalSeconds,
                     e.Exito,
                     e.Mensaje
+                    // 🔹 Aquí ya no ponemos FileXLS
                 })
             };
 

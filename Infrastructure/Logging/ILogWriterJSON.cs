@@ -1,4 +1,6 @@
 ﻿
+using Infrastructure.DTOs;
+
 namespace Infrastructure.Logging
 {
     public interface ILogWriterJSON

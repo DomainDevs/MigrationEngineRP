@@ -1,14 +1,16 @@
-﻿using System.IO;
-using ClosedXML.Excel;
-using Infrastructure.DTOs;
+﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using ClosedXML.Excel;
+using Infrastructure.DTOs;
 
 namespace Infrastructure.Reporting
 {
     public class MigrationReportExcelWriter
     {
         private readonly string _outputFolder;
+        public string OutputFolder => _outputFolder;
 
         public MigrationReportExcelWriter(string outputFolder)
         {
@@ -20,8 +22,6 @@ namespace Infrastructure.Reporting
                 Directory.CreateDirectory(_outputFolder);
         }
 
-        // Genera un reporte por job
-        // Dentro de MigrationReportExcelWriter
         public string WriteJobReport(MigrationJobReportDto job, string fullPath)
         {
             if (job == null) throw new ArgumentNullException(nameof(job));
@@ -30,7 +30,6 @@ namespace Infrastructure.Reporting
             using var wb = new XLWorkbook();
             var ws = wb.Worksheets.Add("Migration Report");
 
-            // Encabezados
             ws.Cell(1, 1).Value = "StepId";
             ws.Cell(1, 2).Value = "StepName";
             ws.Cell(1, 3).Value = "Status";
@@ -67,7 +66,6 @@ namespace Infrastructure.Reporting
             return fullPath;
         }
 
-        // Genera un reporte maestro con todos los jobs y una hoja resumen
         public string WriteAllJobsReport(List<MigrationJobReportDto> jobs)
         {
             if (jobs == null || jobs.Count == 0)
@@ -77,7 +75,6 @@ namespace Infrastructure.Reporting
 
             using var wb = new XLWorkbook();
 
-            // Hoja resumen
             var summaryWs = wb.Worksheets.Add("Summary");
             summaryWs.Cell(1, 1).Value = "JobId";
             summaryWs.Cell(1, 2).Value = "TotalSteps";
@@ -91,7 +88,6 @@ namespace Infrastructure.Reporting
 
             foreach (var job in jobs)
             {
-                // Hoja por job
                 var ws = wb.Worksheets.Add($"Job_{job.JobId}");
                 ws.Cell(1, 1).Value = "StepId";
                 ws.Cell(1, 2).Value = "StepName";
@@ -125,7 +121,6 @@ namespace Infrastructure.Reporting
                 }
                 ws.Columns().AdjustToContents();
 
-                // Agregar datos a hoja resumen
                 summaryWs.Cell(summaryRow, 1).Value = job.JobId;
                 summaryWs.Cell(summaryRow, 2).Value = job.Steps.Count;
                 summaryWs.Cell(summaryRow, 3).Value = job.Steps.Count(s => s.Status.Equals("Success", StringComparison.OrdinalIgnoreCase));

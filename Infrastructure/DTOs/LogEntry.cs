@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Infrastructure.Logging
+namespace Infrastructure.DTOs
 {
     public class LogEntry
     {
