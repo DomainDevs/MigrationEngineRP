@@ -192,8 +192,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
     <script>
-
-
         const pingBtn = document.getElementById("pingApiBtn"); //llamar API
         const pingStatus = document.getElementById("pingStatus"); //llamar API
 
@@ -202,91 +200,66 @@
         const pageSize = 3
 
         async function loadLogs() {
-
             const url = "./LogMigration/"
             const list = document.getElementById("migrationList")
-
             list.innerHTML = "Loading..."
-
             try {
-
                 const res = await fetch(url)
                 const html = await res.text()
-
                 const parser = new DOMParser()
                 const doc = parser.parseFromString(html, "text/html")
-
                 allLinks = [...doc.querySelectorAll("a")]
                     .map(a => a.getAttribute("href"))
                     .filter(href => href && href.endsWith(".json"))
-
                 allLinks.sort().reverse()
-
                 renderPage()
-
             } catch (err) {
                 list.innerHTML = "Error loading logs"
             }
         }
 
         async function renderPage() {
-
             const list = document.getElementById("migrationList")
-
             list.innerHTML = ""
-
             const start = (currentPage - 1) * pageSize
             const end = start + pageSize
             const pageLinks = allLinks.slice(start, end)
 
             for (const file of pageLinks) {
-
                 const url = "./LogMigration/"
                 const data = await fetch(url + file).then(r => r.json())
                 const ok = data.Fallidos === 0
                 const li = document.createElement("li")
-
                 li.className = "border rounded-lg p-4 bg-gray-50"
                 li.innerHTML = `
-                    <div class="flex justify-between">
-                        <div>
-                            <div class="font-semibold">${data.NombreJob}</div>
-
-                            <div class="text-xs text-gray-500">
-                            ${data.Generado} · pasos ${data.TotalPasos}
+                        <div class="flex justify-between">
+                            <div>
+                                <div class="font-semibold">${data.NombreJob}</div>
+                                <div class="text-xs text-gray-500">
+                                ${data.Generado} · pasos ${data.TotalPasos}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs px-2 py-1 rounded ${ok ? "bg-green-600 text-white" : "bg-red-600 text-white"}">
+                                    ${ok ? "SUCCESS" : "FAILED"}
+                                </span>
+                                <span class="text-xs text-gray-500">
+                                ✔ ${data.Exitos} / ✖ ${data.Fallidos}
+                                </span>
+                                <a href="${url}${file}" target="_blank" class="text-blue-600 text-xs">
+                                View
+                                </a>
+                                <a href="${url}${data.ExcelPath}" target="_blank" class="text-blue-600 text-xs">
+                                Excel Report
+                                </a>
                             </div>
                         </div>
-
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs px-2 py-1 rounded ${ok ? "bg-green-600 text-white" : "bg-red-600 text-white"}">
-                                ${ok ? "SUCCESS" : "FAILED"}
-                            </span>
-
-                            <span class="text-xs text-gray-500">
-                            ✔ ${data.Exitos} / ✖ ${data.Fallidos}
-                            </span>
-
-                            <a href="${url}${file}" target="_blank"
-                            class="text-blue-600 text-xs">
-                            View
-                            </a>
-
-                            <a href="${url}${data.ExcelPath}" target="_blank"
-                            class="text-blue-600 text-xs">
-                            Excel Report
-                            </a>
-
-                        </div>
-                    </div>
                     `
-
                 list.appendChild(li)
-
             }
 
             const pageInfo = document.getElementById("pageInfo")
             pageInfo.textContent = `Página ${currentPage} de ${Math.ceil(allLinks.length / pageSize)}`
-
         }
 
         document.getElementById("prevPage").onclick = () => {
@@ -308,9 +281,7 @@
         const statusMsg = document.getElementById("statusMsg")
 
         runBtn.addEventListener('click', async () => {
-
             let payload;
-
             try {
                 payload = JSON.parse(jsonInput.value);
             } catch {
@@ -323,51 +294,39 @@
             statusMsg.className = "mt-2 text-sm text-yellow-500";
 
             try {
-
                 const res = await fetch('./api/Migration/run-job-from-folderm', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
-                /* RESPUESTA EXITOSA */
                 if (res.status >= 200 && res.status < 300) {
-
                     statusMsg.textContent = `✅ Migración ejecutada (HTTP ${res.status})`;
                     statusMsg.className = "mt-2 text-sm text-green-500";
                     return;
                 }
 
-                /* ERRORES HTTP */
                 const errorText = await res.text();
                 statusMsg.textContent = `❌ Error HTTP ${res.status}: ${errorText}`;
                 statusMsg.className = "mt-2 text-sm text-red-500";
 
-            }
-            catch (err) {
+            } catch (err) {
                 statusMsg.textContent = "❌ Error de conexión: " + err.message;
                 statusMsg.className = "mt-2 text-sm text-red-500";
             }
-
         });
 
         loadLogs()
-
         setInterval(loadLogs, 15000)
-
-
 
         //LLamar API
         pingBtn.addEventListener("click", async () => {
             pingStatus.textContent = "⏳ Verificando...";
             pingStatus.className = "mt-2 text-sm text-yellow-500";
-
             try {
                 const res = await fetch("./api/migration/ping");
                 if (res.ok) {
-                    const text = await res.text(); // O json() si tu API devuelve JSON
+                    const text = await res.text();
                     pingStatus.textContent = `✅ API OK: ${text}`;
                     pingStatus.className = "mt-2 text-sm text-green-500";
                 } else {
@@ -379,19 +338,16 @@
                 pingStatus.className = "mt-2 text-sm text-red-500";
             }
 
-            //
             pingStatus.classList.remove("fade-out");
             void pingStatus.offsetWidth;
             pingStatus.classList.add("fade-out");
         });
 
-
         const formatBtn = document.getElementById("formatJsonBtn");
-
         formatBtn.addEventListener("click", () => {
             try {
-                const json = JSON.parse(jsonInput.value); // Parsea el JSON
-                jsonInput.value = JSON.stringify(json, null, 4); // Indenta 4 espacios
+                const json = JSON.parse(jsonInput.value);
+                jsonInput.value = JSON.stringify(json, null, 4);
                 statusMsg.textContent = "✅ JSON formateado correctamente";
                 statusMsg.className = "mt-2 text-sm text-green-500";
             } catch (err) {
@@ -400,34 +356,25 @@
             }
         });
 
-
-        //====================================USO DE WASM====================================
-        // Crear conexión SignalR
+        //====================== SIGNALR ======================
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/migrationHub")
             .withAutomaticReconnect()
             .build();
 
-        // Elementos de progreso
         const progressBar = document.getElementById("progressBar");
         const progressText = document.getElementById("progressText");
 
-        // Función para actualizar la barra
-        function updateProgress(progress, stepName) {
-            progressBar.style.width = progress + "%";
-            progressText.textContent = `${progress.toFixed(0)}% - ${stepName}`;
-        }
-
-        // Conexión a eventos desde el servidor
-        connection.on("ReceiveProgress", (progress, stepName) => {
+        // Actualizar barra de progreso desde el Hub
+        connection.on("RecibirProgreso", (jobId, progress, stepName) => {
             progressBar.style.width = progress + "%";
             progressText.textContent = `${progress.toFixed(0)}% - ${stepName}`;
         });
 
-        // Iniciar conexión
         connection.start()
             .then(() => console.log("Conectado a MigrationHub"))
             .catch(err => console.error(err.toString()));
+
     </script>
 
 </body>
