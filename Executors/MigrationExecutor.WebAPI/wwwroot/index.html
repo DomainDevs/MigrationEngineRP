@@ -69,13 +69,10 @@
 
         <!-- NAVBAR -->
         <header class="flex justify-between items-center border-b border-gray-200 py-1">
-            <!-- Parte izquierda azul solo para el logo -->
             <div class="flex items-center gap-3 px-6 py-4 bg-[#0b2555] rounded-r-md">
-
                 <img src="sistran.webp" alt="Sistran Logo" class="h-8 w-auto">
             </div>
 
-            <!-- Parte derecha blanca con botones y nav -->
             <div class="flex-1 flex justify-between items-center px-6 py-4 bg-white">
                 <div class="flex items-center gap-3">
                     <i class="bi bi-database text-[#0b2555] text-2xl"></i>
@@ -105,7 +102,6 @@
 
         <!-- CONTENT -->
         <main class="px-4 py-4 space-y-2">
-            <!-- HERO -->
             <section>
                 <h1 class="text-2xl font-bold text-gray-800">
                     Sistran Migration Executor Dashboard
@@ -115,7 +111,6 @@
                 </p>
             </section>
 
-            <!-- ACTION CARDS -->
             <section class="grid md:grid-cols-2 gap-6">
                 <!-- RUN MIGRATION -->
                 <div class="card">
@@ -162,11 +157,7 @@
             <!-- LOGS -->
             <section class="card">
                 <div class="flex justify-between items-center mb-4">
-
-                    <!-- TÍTULO -->
                     <h2 class="text-xl font-semibold">Migration Logs</h2>
-
-                    <!-- PAGINACIÓN -->
                     <div class="flex items-center gap-2">
                         <button id="prevPage" class="px-3 py-1 bg-gray-200 rounded-lg text-sm">
                             Anterior
@@ -178,22 +169,23 @@
                             Siguiente
                         </button>
                     </div>
-
                 </div>
-
-                <!-- LISTA -->
                 <ul id="migrationList" class="space-y-3"></ul>
             </section>
 
-
         </main>
-
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
     <script>
-        const pingBtn = document.getElementById("pingApiBtn"); //llamar API
-        const pingStatus = document.getElementById("pingStatus"); //llamar API
+        // DOM Elements
+        const pingBtn = document.getElementById("pingApiBtn");
+        const pingStatus = document.getElementById("pingStatus");
+        const runBtn = document.getElementById("runMigrationBtn");
+        const jsonInput = document.getElementById("jsonInput");
+        const statusMsg = document.getElementById("statusMsg");
+        const progressBar = document.getElementById("progressBar");
+        const progressText = document.getElementById("progressText");
 
         let allLinks = []
         let currentPage = 1
@@ -203,16 +195,20 @@
             const url = "./LogMigration/"
             const list = document.getElementById("migrationList")
             list.innerHTML = "Loading..."
+
             try {
                 const res = await fetch(url)
                 const html = await res.text()
                 const parser = new DOMParser()
                 const doc = parser.parseFromString(html, "text/html")
+
                 allLinks = [...doc.querySelectorAll("a")]
                     .map(a => a.getAttribute("href"))
                     .filter(href => href && href.endsWith(".json"))
+
                 allLinks.sort().reverse()
                 renderPage()
+
             } catch (err) {
                 list.innerHTML = "Error loading logs"
             }
@@ -230,6 +226,7 @@
                 const data = await fetch(url + file).then(r => r.json())
                 const ok = data.Fallidos === 0
                 const li = document.createElement("li")
+
                 li.className = "border rounded-lg p-4 bg-gray-50"
                 li.innerHTML = `
                         <div class="flex justify-between">
@@ -239,22 +236,29 @@
                                 ${data.Generado} · pasos ${data.TotalPasos}
                                 </div>
                             </div>
+
                             <div class="flex items-center gap-3">
                                 <span class="text-xs px-2 py-1 rounded ${ok ? "bg-green-600 text-white" : "bg-red-600 text-white"}">
                                     ${ok ? "SUCCESS" : "FAILED"}
                                 </span>
+
                                 <span class="text-xs text-gray-500">
                                 ✔ ${data.Exitos} / ✖ ${data.Fallidos}
                                 </span>
-                                <a href="${url}${file}" target="_blank" class="text-blue-600 text-xs">
+
+                                <a href="${url}${file}" target="_blank"
+                                class="text-blue-600 text-xs">
                                 View
                                 </a>
-                                <a href="${url}${data.ExcelPath}" target="_blank" class="text-blue-600 text-xs">
+
+                                <a href="${url}${data.ExcelPath}" target="_blank"
+                                class="text-blue-600 text-xs">
                                 Excel Report
                                 </a>
+
                             </div>
                         </div>
-                    `
+                        `
                 list.appendChild(li)
             }
 
@@ -276,10 +280,7 @@
             }
         }
 
-        const runBtn = document.getElementById("runMigrationBtn")
-        const jsonInput = document.getElementById("jsonInput")
-        const statusMsg = document.getElementById("statusMsg")
-
+        // RUN MIGRATION
         runBtn.addEventListener('click', async () => {
             let payload;
             try {
@@ -300,7 +301,7 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (res.status >= 200 && res.status < 300) {
+                if (res.ok) {
                     statusMsg.textContent = `✅ Migración ejecutada (HTTP ${res.status})`;
                     statusMsg.className = "mt-2 text-sm text-green-500";
                     return;
@@ -319,7 +320,7 @@
         loadLogs()
         setInterval(loadLogs, 15000)
 
-        //LLamar API
+        // API Ping
         pingBtn.addEventListener("click", async () => {
             pingStatus.textContent = "⏳ Verificando...";
             pingStatus.className = "mt-2 text-sm text-yellow-500";
@@ -343,8 +344,8 @@
             pingStatus.classList.add("fade-out");
         });
 
-        const formatBtn = document.getElementById("formatJsonBtn");
-        formatBtn.addEventListener("click", () => {
+        // FORMAT JSON
+        document.getElementById("formatJsonBtn").addEventListener("click", () => {
             try {
                 const json = JSON.parse(jsonInput.value);
                 jsonInput.value = JSON.stringify(json, null, 4);
@@ -356,25 +357,22 @@
             }
         });
 
-        //====================== SIGNALR ======================
+        // SIGNALR
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/migrationHub")
             .withAutomaticReconnect()
             .build();
 
-        const progressBar = document.getElementById("progressBar");
-        const progressText = document.getElementById("progressText");
-
-        // Actualizar barra de progreso desde el Hub
-        connection.on("RecibirProgreso", (jobId, progress, stepName) => {
-            progressBar.style.width = progress + "%";
-            progressText.textContent = `${progress.toFixed(0)}% - ${stepName}`;
+        connection.on("ReceiveProgress", (progress, stepName) => {
+            if (progressBar && progressText) {
+                progressBar.style.width = progress + "%";
+                progressText.textContent = `${progress.toFixed(0)}% - ${stepName}`;
+            }
         });
 
         connection.start()
             .then(() => console.log("Conectado a MigrationHub"))
             .catch(err => console.error(err.toString()));
-
     </script>
 
 </body>

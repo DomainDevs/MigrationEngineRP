@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
+namespace Engine.Hubs;
+
 public class MigrationHub : Hub
 {
     public async Task BroadcastProgress(Guid jobId, int porcentaje, string nombrePaso)

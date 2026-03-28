@@ -1,6 +1,8 @@
 ﻿using Infrastructure.Logging;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
+using Engine.Hubs;
+
 
 namespace Engine;
 
@@ -19,7 +21,10 @@ public static class AddEngineExtension
         {
             var mdWriter = sp.GetRequiredService<ILogWriterMD>();
             var jsonWriter = sp.GetRequiredService<ILogWriterJSON>();
-            return new Services.MigrationService(mdWriter, jsonWriter, rutaLogs);
+            var hubContext = sp.GetRequiredService<IHubContext<MigrationHub>>(); // <--- aquí
+
+            //return new Services.MigrationService(mdWriter, jsonWriter, rutaLogs);
+            return new Services.MigrationService(mdWriter, jsonWriter, rutaLogs, hubContext);
         });
 
         return services;

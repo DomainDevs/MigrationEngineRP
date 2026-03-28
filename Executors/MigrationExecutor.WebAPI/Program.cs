@@ -1,14 +1,7 @@
-﻿using Core.Entities;
-using Engine;
-using Engine.Services;
+﻿using Engine;
+using Engine.Hubs;
 using Infrastructure;
-using Infrastructure.Documentation; // <- para AddConfiguredSwagger
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using MigrationExecutor.WebAPI.Utils;
 
 var builder = WebApplication.CreateBuilder(args);

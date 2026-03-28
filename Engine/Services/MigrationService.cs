@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Engine.Extensions;
+using Engine.Hubs;
 using Infrastructure.Logging;
 using Infrastructure.Reporting;
 using Microsoft.AspNetCore.SignalR;
@@ -19,13 +20,13 @@ namespace Engine.Services
         private readonly IHubContext<MigrationHub> _hubContext; //Hub
 
         public MigrationService(ILogWriterMD mdWriter, ILogWriterJSON jsonWriter, string reportsOutputFolder,
-            IHubContext<MigrationHub>? hubContext = null  // <-- nuevo parámetro opcional
+            IHubContext<MigrationHub> hubContext
             )
         {
             _mdWriter = mdWriter ?? throw new ArgumentNullException(nameof(mdWriter));
             _jsonWriter = jsonWriter ?? throw new ArgumentNullException(nameof(jsonWriter));
             _reportWriter = new MigrationReportExcelWriter(reportsOutputFolder);
-            _hubContext = hubContext; // <-- asignar
+            _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
         }
 
         public bool EjecutarJob(MigrationJob job)
