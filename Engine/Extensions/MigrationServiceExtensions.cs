@@ -59,6 +59,7 @@ namespace Engine.Extensions
 
         /// Ejecuta un solo paso de migración.
         /// Maneja la lógica de éxito/fallo, captura excepciones, registra tiempos y mensajes.
+        /*
         private static LogEntry EjecutarPaso(MigrationStep step, LogEntry logEntry)
         {
             step.Inicio = DateTime.Now;
@@ -95,6 +96,72 @@ namespace Engine.Extensions
 
             return logEntry;
         }
+        */
+        private static LogEntry EjecutarPaso(MigrationStep step, LogEntry logEntry)
+        {
+            step.Inicio = DateTime.Now;
+            logEntry.Inicio = step.Inicio;
+
+            try
+            {
+                // === Aquí se ejecutaría el paquete SSIS real ===
+                // Por ejemplo, usando DTExec u otra API interna
+                // step.RutaPaquete tiene la ruta del .dtsx a ejecutar
+                EjecutarPaqueteETL(step.RutaPaquete); // <-- tu función real de ejecución ETL
+
+                step.Exito = true;
+                step.Mensaje = "Paso ejecutado correctamente";
+
+                logEntry.Exito = true;
+                logEntry.Mensaje = step.Mensaje;
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"> {step.Nombre} [OK]");
+            }
+            catch (Exception ex)
+            {
+                step.Exito = false;
+                step.Mensaje = ex.Message;
+
+                logEntry.Exito = false;
+                logEntry.Mensaje = ex.Message;
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"> {step.Nombre} [FAIL]");
+            }
+            finally
+            {
+                step.Fin = DateTime.Now;
+                logEntry.Fin = step.Fin;
+                Console.ResetColor();
+            }
+
+            return logEntry;
+        }
+        private static void EjecutarPaqueteETL(string rutaPaquete)
+        {
+            if (string.IsNullOrWhiteSpace(rutaPaquete) || !File.Exists(rutaPaquete))
+                throw new FileNotFoundException($"No se encontró el paquete: {rutaPaquete}");
+
+            var proceso = new System.Diagnostics.Process();
+            proceso.StartInfo.FileName = "dtexec.exe"; // Ejecutable de SSIS
+            proceso.StartInfo.Arguments = $"/F \"{rutaPaquete}\""; // Ruta del paquete
+            proceso.StartInfo.UseShellExecute = false;
+            proceso.StartInfo.RedirectStandardOutput = true;
+            proceso.StartInfo.RedirectStandardError = true;
+            proceso.StartInfo.CreateNoWindow = true;
+
+            proceso.Start();
+
+            string output = proceso.StandardOutput.ReadToEnd();
+            string error = proceso.StandardError.ReadToEnd();
+
+            proceso.WaitForExit();
+
+            if (proceso.ExitCode != 0)
+                throw new Exception($"Error al ejecutar paquete: {error}\n{output}");
+        }
+
 
         /// Crea un MigrationJob a partir de una carpeta que contiene paquetes SSIS (*.dtsx).
         /// Permite incluir u omitir paquetes específicos según listas proporcionadas en el JSON.
