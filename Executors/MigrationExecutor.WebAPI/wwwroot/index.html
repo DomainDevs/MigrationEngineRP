@@ -359,20 +359,29 @@
 
         // SIGNALR
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/migrationHub")
+            .withUrl("/migrationhub") // ruta correcta del Hub
             .withAutomaticReconnect()
             .build();
 
-        connection.on("ReceiveProgress", (progress, stepName) => {
-            if (progressBar && progressText) {
-                progressBar.style.width = progress + "%";
-                progressText.textContent = `${progress.toFixed(0)}% - ${stepName}`;
-            }
+        // Evento que el Hub envía
+        connection.on("RecibirProgreso", (jobId, porcentaje, nombrePaso) => {
+            console.log(`[Cliente] Progreso recibido: ${porcentaje}% - ${nombrePaso}`);
+
+            const progressBar = document.getElementById("progressBar");
+            const progressText = document.getElementById("progressText");
+
+            if (progressBar) progressBar.style.width = porcentaje + "%";
+            if (progressText) progressText.textContent = `${porcentaje}% - ${nombrePaso}`;
         });
 
         connection.start()
-            .then(() => console.log("Conectado a MigrationHub"))
-            .catch(err => console.error(err.toString()));
+            .then(() => console.log("Conectado al Hub"))
+            .catch(err => console.error("Error conectando al Hub:", err));
+
+        // Botón para iniciar el job (si tienes endpoint API)
+        document.getElementById("startBtn")?.addEventListener("click", async () => {
+            await fetch("/api/migration/start", { method: "POST" });
+        });
     </script>
 
 </body>

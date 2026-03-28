@@ -40,7 +40,18 @@ namespace Engine.Extensions
 
                 var porcentaje = (i + 1) * 100 / job.Pasos.Count;
                 // Enviar al Hub
-                hubContext.Clients.All.SendAsync("RecibirProgreso", job.Id, porcentaje, step.Nombre);
+                //Console.ForegroundColor = ConsoleColor.Cyan;
+                //Console.WriteLine($"[Hub] Enviando progreso: {porcentaje}% - {step.Nombre}");
+                //Console.ResetColor();
+
+                //hubContext.Clients.All.SendAsync("RecibirProgreso", job.Id, porcentaje, step.Nombre);
+                //Cambie a fire & forget, porque no lo soporta
+                _ = hubContext.Clients.All.SendAsync(
+                    "RecibirProgreso",
+                    job.Id,
+                    porcentaje,
+                    step.Nombre
+                );
 
             }
             return logs;

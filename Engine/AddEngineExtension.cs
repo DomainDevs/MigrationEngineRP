@@ -21,9 +21,13 @@ public static class AddEngineExtension
         {
             var mdWriter = sp.GetRequiredService<ILogWriterMD>();
             var jsonWriter = sp.GetRequiredService<ILogWriterJSON>();
-            var hubContext = sp.GetRequiredService<IHubContext<MigrationHub>>(); // <--- aquí
+            //var hubContext = sp.GetRequiredService<IHubContext<MigrationHub>>(); // <--- aquí
 
             //return new Services.MigrationService(mdWriter, jsonWriter, rutaLogs);
+            //return new Services.MigrationService(mdWriter, jsonWriter, rutaLogs, hubContext);
+
+
+            var hubContext = sp.GetRequiredService<IHubContext<MigrationHub>>(); // <--- inyección
             return new Services.MigrationService(mdWriter, jsonWriter, rutaLogs, hubContext);
         });
 
