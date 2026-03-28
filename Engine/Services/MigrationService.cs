@@ -36,21 +36,21 @@ namespace Engine.Services
             {
                 job.FechaEjecucion = DateTime.Now;
 
-                // 🔹 Crear nombre de reporte
+                // Crear nombre de reporte
                 string excelFileName = ReportGeneratorExtensions.GetExcelFileName(job, _reportWriter.OutputFolder);
-
-                // 🔹 Inicializar logs
+                
+                // Inicializar logs
                 var logs = MigrationServiceExtensions.InicializarLogs(job, excelFileName);
 
-                // 🔹 Ejecutar pasos
+                // Ejecutar pasos
                 logs = MigrationServiceExtensions.EjecutarPasos(job, logs);
 
                 job.Completado = job.Pasos.All(p => p.Exito);
 
-                // 🔹 Generar DTO para reportes
+                // Generar DTO para reportes
                 var reportDto = ReportGeneratorExtensions.MapToReportDto(job);
 
-                // 🔹 Generar reportes JSON, MD y Excel
+                // Generar reportes JSON, MD y Excel
                 ReportGeneratorExtensions.EscribirReportes(job, logs, reportDto, excelFileName, _jsonWriter, _mdWriter, _reportWriter);
 
                 return true;

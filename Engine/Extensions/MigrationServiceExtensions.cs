@@ -1,5 +1,7 @@
 ﻿using Core.Entities;
 using Infrastructure.DTOs;
+using Microsoft.AspNetCore.SignalR;
+//using MigrationExecutor.WebAPI.Hubs;
 
 namespace Engine.Extensions
 {
@@ -20,7 +22,7 @@ namespace Engine.Extensions
             {
                 NombrePaso = step.Nombre,
                 Inicio = step.Inicio,    // Fecha inicial (puede ser null)
-                FileXLS = excelFileName  // Archivo Excel asignado
+                FileXLS = Path.GetFileName(excelFileName) // Solo nombre del archivo
             }).ToList();
         }
 
@@ -32,6 +34,9 @@ namespace Engine.Extensions
             {
                 var step = job.Pasos[i];
                 logs[i] = EjecutarPaso(step, logs[i]);
+
+                //var porcentaje = (i + 1) * 100 / job.Pasos.Count;
+                //MigrationHub.BroadcastProgress(job.Id, porcentaje, step.Nombre);
             }
             return logs;
         }
