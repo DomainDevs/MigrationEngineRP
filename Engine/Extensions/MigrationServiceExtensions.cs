@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Engine.Hubs;
+using Infrastructure.Config;
 using Infrastructure.DTOs;
 using Microsoft.AspNetCore.SignalR;
 //using MigrationExecutor.WebAPI.Hubs;
@@ -15,6 +16,7 @@ namespace Engine.Extensions
     /// </summary>
     public static class MigrationServiceExtensions
     {
+
         /// Inicializa la lista de logs para cada paso de un job de migración. 
         /// Asigna el nombre del archivo Excel
         public static List<LogEntry> InicializarLogs(MigrationJob job, string excelFileName)

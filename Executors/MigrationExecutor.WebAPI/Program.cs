@@ -11,18 +11,13 @@ builder.Configuration.AddJsonFile("Configurations/appsettings.json", optional: f
 builder.Configuration.AddJsonFile("Configurations/documentation.json", optional: false, reloadOnChange: true);
 builder.Configuration.AddJsonFile("Configurations/cors.json", optional: false, reloadOnChange: true);
 
-// Para poder inyectar directamente MigrationConfig, opcionalmente:
-builder.Services.Configure<MigrationConfig>(builder.Configuration.GetSection("Migration"));
-
-// Recupera carpeta de logs
 string basePath = AppContext.BaseDirectory; // ruta del exe o WebAPI
 string rutaLogs = Path.Combine(basePath, builder.Configuration.GetValue<string>("Migration:CarpetaLogs"));
 
 builder.Services.AddInfrastructureServices(builder.Configuration, rutaLogs, true); //Registrar Infraestructura
-builder.Services.AddEngineServices(rutaLogs); // Registrar Engine
-//builder.Services.AddControllers(); // Registrar controladores
+builder.Services.AddEngineServices(builder.Configuration, rutaLogs); // Registrar Engine
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers(); // Registrar controladores
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR(); ///Adicionar AddSignalR
@@ -38,8 +33,7 @@ app.UseRouting();
 // Mapea tu Hub
 app.MapHub<MigrationHub>("/migrationHub");
 
-
-// mostrar archivos
+// Mostrar archivos
 app.UseFileServer(new FileServerOptions
 {
     FileProvider = new PhysicalFileProvider(rutaLogs),
@@ -47,7 +41,5 @@ app.UseFileServer(new FileServerOptions
     EnableDirectoryBrowsing = true
 });
 app.UseDirectoryBrowser();
-
 app.MapControllers();
-
 app.Run();

@@ -1,4 +1,5 @@
-﻿using Infrastructure.Cors;
+﻿using Infrastructure.Config;
+using Infrastructure.Cors;
 using Infrastructure.Documentation;
 using Infrastructure.Logging;
 using Microsoft.AspNetCore.Builder;
@@ -18,6 +19,7 @@ namespace Infrastructure
         /// <returns>El contenedor de servicios actualizado</returns>
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config, string rutaLogs, Boolean isWEPApi = false)
         {
+
             if (string.IsNullOrWhiteSpace(rutaLogs))
                 throw new ArgumentException("Debe indicar la ruta base para los logs.", nameof(rutaLogs));
 
@@ -26,9 +28,11 @@ namespace Infrastructure
             services.AddSingleton(mdWriter);
             services.AddSingleton<ILogWriterMD>(mdWriter);
 
+            // Para poder inyectar directamente MigrationConfig:
+            services.Configure<MigrationConfig>(config.GetSection("Migration"));
 
-            //
             services.AddSignalR();
+            services.AddControllers(); // Registrar controladores
 
             // Registrar LogWriterJSON e ILogWriterJSON
             var jsonWriter = new LogWriterJSON(rutaLogs);

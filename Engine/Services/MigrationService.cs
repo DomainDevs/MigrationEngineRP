@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Engine.Extensions;
 using Engine.Hubs;
+using Infrastructure.Config;
 using Infrastructure.Logging;
 using Infrastructure.Reporting;
 using Microsoft.AspNetCore.SignalR;
@@ -17,9 +18,11 @@ namespace Engine.Services
         private static readonly object _lock = new object();
         private static MigrationJob? _currentJob;
 
+        private readonly MigrationConfig _config;
+
         private readonly IHubContext<MigrationHub> _hubContext; //Hub
 
-        public MigrationService(ILogWriterMD mdWriter, ILogWriterJSON jsonWriter, string reportsOutputFolder,
+        public MigrationService(ILogWriterMD mdWriter, ILogWriterJSON jsonWriter, string reportsOutputFolder, MigrationConfig config,
             IHubContext<MigrationHub> hubContext
             )
         {
@@ -27,6 +30,7 @@ namespace Engine.Services
             _jsonWriter = jsonWriter ?? throw new ArgumentNullException(nameof(jsonWriter));
             _reportWriter = new MigrationReportExcelWriter(reportsOutputFolder);
             _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
+            _config = config;
         }
 
         public bool EjecutarJob(MigrationJob job)

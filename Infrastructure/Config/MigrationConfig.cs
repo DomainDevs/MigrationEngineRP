@@ -1,4 +1,4 @@
-﻿namespace MigrationExecutor.WebAPI.Utils;
+﻿namespace Infrastructure.Config;
 
 public class MigrationConfig
 {
