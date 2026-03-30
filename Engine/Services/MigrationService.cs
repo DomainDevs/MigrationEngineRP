@@ -54,7 +54,7 @@ namespace Engine.Services
                 var logs = MigrationServiceExtensions.InicializarLogs(job, excelFileName);
 
                 // Ejecutar pasos
-                logs = MigrationServiceExtensions.EjecutarPasos(job, logs, _hubContext);
+                logs = MigrationServiceExtensions.EjecutarPasos(job, logs, _hubContext, _config);
 
                 job.Completado = job.Pasos.All(p => p.Exito);
 

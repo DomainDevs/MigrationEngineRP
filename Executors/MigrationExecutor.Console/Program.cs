@@ -39,7 +39,7 @@ try
             Directory.CreateDirectory(logsPath);
 
             services.AddInfrastructureServices(context.Configuration, logsPath);
-            services.AddEngineServices(logsPath);
+            services.AddEngineServices(context.Configuration, logsPath);
         })
         .Build();
 
@@ -59,6 +59,7 @@ try
     migrationService.EjecutarJobDesdeCarpeta(
         migrationConfigObj.NombreJob,
         migrationConfigObj.CarpetaPaquetes,
+        null, null,
         migrationConfigObj.PaquetesIncluir,
         migrationConfigObj.PaquetesOmitir
     );

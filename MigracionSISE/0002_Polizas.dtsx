@@ -11,8 +11,8 @@
   DTS:LocaleID="8192"
   DTS:ObjectName="Polizas"
   DTS:PackageType="5"
-  DTS:VersionBuild="12"
-  DTS:VersionGUID="{2EFA8576-99A4-4BD6-89CE-7FC8FBC67764}">
+  DTS:VersionBuild="33"
+  DTS:VersionGUID="{57F9995A-415A-4603-AD61-503B84A79828}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -24,6 +24,40 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:ConnectionString="C:\Devs\Core\SISTRAN\MIG1\Sistran.MigrationEngine\Scripts\dbo.Polizas.sql" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PRUEBAS.sqluser]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{174DA824-19F1-4242-8448-6B7BB3664EE2}"
+      DTS:ObjectName="DESKTOP-O7N0ROR.PRUEBAS.sqluser">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=DESKTOP-O7N0ROR;User ID=sqluser;Initial Catalog=PRUEBAS;Provider=SQLNCLI11.1;Application Name=SSIS-Polizas-{174DA824-19F1-4242-8448-6B7BB3664EE2}DESKTOP-O7N0ROR.PRUEBAS.sqluser;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAqeJUbC8LZ0KU9DBioXLbfQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACYf9cLHdQa1b2ZYpvtEFsvqzNla0dX8EC7nPwSIAYMXAAAAAAOgAAAAAIAACAAAABcxm5ZMQiAyPI1BH8AHwsFJI/yrjqwcALbwm8I4bgzWiAAAAAbrOkPImLX9r3O3K7evj0mvWwm3BplhWIRH0tpnYVONEAAAAC6g1VIQ7q3bTErsqgWcKE0dTo1brujYlxDGVQXywsH8v1sJJxRI6v6cxdwDbCcfR1nzPMgBS5ho2HKmgBlC52Y</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{AB0F5584-9B31-4285-85D0-09B85791D060}"
+      DTS:ObjectName="DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=DESKTOP-O7N0ROR;User ID=sqluser;Initial Catalog=PruebasMigracion2;Provider=SQLNCLI11.1;Application Name=SSIS-Polizas-{AB0F5584-9B31-4285-85D0-09B85791D060}DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAqeJUbC8LZ0KU9DBioXLbfQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADPiwMHZpEeSeTz/nid1R8Lgkel81yWSzI0mhgS7kOR7gAAAAAOgAAAAAIAACAAAAB9UYbMo2bVPgnHOSDlkiZXsfgVtIyxr9qPF5vtZAyR1iAAAABpgTnUvAyWiI42bFePfVCDeptPW8w4K5vqydmYGpCLpEAAAAB5qCPzQhNJ92E6DSLZGHtjd2hwupm7wPF6h3bkDsCyiQEu2WoIojzhKHjsopzdAXFNUKCvUqhfeY39y/R3oYEM</DTS:Password>
+        </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
   </DTS:ConnectionManagers>
@@ -102,8 +136,8 @@
               <connections>
                 <connection
                   refId="Package\Tarea Integrar datos Polizas\Destino de OLE DB.Connections[OleDbConnection]"
-                  connectionManagerID="{95B54F1B-E488-4C47-8CE0-33C2C9BFC39D}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[DestinationDB]"
+                  connectionManagerID="Package.ConnectionManagers[DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1]"
+                  connectionManagerRefId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1]"
                   description="La conexión de tiempo de ejecución OLE DB usada para obtener acceso a la base de datos."
                   name="OleDbConnection" />
               </connections>
@@ -169,20 +203,6 @@
                       cachedName="Estado"
                       externalMetadataColumnId="Package\Tarea Integrar datos Polizas\Destino de OLE DB.Inputs[Entrada de destino de OLE DB].ExternalColumns[Estado]"
                       lineageId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].Columns[Estado]" />
-                    <inputColumn
-                      refId="Package\Tarea Integrar datos Polizas\Destino de OLE DB.Inputs[Entrada de destino de OLE DB].Columns[InfoAdicional]"
-                      cachedDataType="wstr"
-                      cachedLength="200"
-                      cachedName="InfoAdicional"
-                      externalMetadataColumnId="Package\Tarea Integrar datos Polizas\Destino de OLE DB.Inputs[Entrada de destino de OLE DB].ExternalColumns[InfoAdicional]"
-                      lineageId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].Columns[InfoAdicional]" />
-                    <inputColumn
-                      refId="Package\Tarea Integrar datos Polizas\Destino de OLE DB.Inputs[Entrada de destino de OLE DB].Columns[Observaciones]"
-                      cachedDataType="wstr"
-                      cachedLength="500"
-                      cachedName="Observaciones"
-                      externalMetadataColumnId="Package\Tarea Integrar datos Polizas\Destino de OLE DB.Inputs[Entrada de destino de OLE DB].ExternalColumns[Observaciones]"
-                      lineageId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].Columns[Observaciones]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -282,7 +302,7 @@
                 <property
                   dataType="System.String"
                   description="Especifica el nombre del objeto de base de datos usado para abrir un conjunto de filas."
-                  name="OpenRowset">[dbo].[pv_header]</property>
+                  name="OpenRowset">[dbo].[Polizas]</property>
                 <property
                   dataType="System.String"
                   description="Especifica la variable que contiene el nombre del objeto de base de datos usado para abrir un conjunto de filas."
@@ -322,7 +342,7 @@ ON P.Id_pv = Ext.Id_pv</property>
                   dataType="System.Int32"
                   description="Especifica el modo utilizado para obtener acceso a la base de datos."
                   name="AccessMode"
-                  typeConverter="AccessMode">2</property>
+                  typeConverter="AccessMode">0</property>
                 <property
                   dataType="System.String"
                   description="Asignaciones entre los parámetros del comando SQL y las variables."
@@ -331,8 +351,8 @@ ON P.Id_pv = Ext.Id_pv</property>
               <connections>
                 <connection
                   refId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Connections[OleDbConnection]"
-                  connectionManagerID="{62BC3112-48C7-4BFA-977A-A81413B42F75}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[BDSource]"
+                  connectionManagerID="Package.ConnectionManagers[DESKTOP-O7N0ROR.PRUEBAS.sqluser]"
+                  connectionManagerRefId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PRUEBAS.sqluser]"
                   description="La conexión de tiempo de ejecución OLE DB usada para obtener acceso a la base de datos."
                   name="OleDbConnection" />
               </connections>
@@ -428,26 +448,6 @@ ON P.Id_pv = Ext.Id_pv</property>
                       lineageId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].Columns[Estado]"
                       name="Estado"
                       truncationRowDisposition="FailComponent" />
-                    <outputColumn
-                      refId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].Columns[InfoAdicional]"
-                      dataType="wstr"
-                      errorOrTruncationOperation="Conversión"
-                      errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].ExternalColumns[InfoAdicional]"
-                      length="200"
-                      lineageId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].Columns[InfoAdicional]"
-                      name="InfoAdicional"
-                      truncationRowDisposition="FailComponent" />
-                    <outputColumn
-                      refId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].Columns[Observaciones]"
-                      dataType="wstr"
-                      errorOrTruncationOperation="Conversión"
-                      errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].ExternalColumns[Observaciones]"
-                      length="500"
-                      lineageId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].Columns[Observaciones]"
-                      name="Observaciones"
-                      truncationRowDisposition="FailComponent" />
                   </outputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -493,16 +493,6 @@ ON P.Id_pv = Ext.Id_pv</property>
                       dataType="wstr"
                       length="50"
                       name="Estado" />
-                    <externalMetadataColumn
-                      refId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].ExternalColumns[InfoAdicional]"
-                      dataType="wstr"
-                      length="200"
-                      name="InfoAdicional" />
-                    <externalMetadataColumn
-                      refId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de origen de OLE DB].ExternalColumns[Observaciones]"
-                      dataType="wstr"
-                      length="500"
-                      name="Observaciones" />
                   </externalMetadataColumns>
                 </output>
                 <output
@@ -562,18 +552,6 @@ ON P.Id_pv = Ext.Id_pv</property>
                       lineageId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de error de origen de OLE DB].Columns[Estado]"
                       name="Estado" />
                     <outputColumn
-                      refId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de error de origen de OLE DB].Columns[InfoAdicional]"
-                      dataType="wstr"
-                      length="200"
-                      lineageId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de error de origen de OLE DB].Columns[InfoAdicional]"
-                      name="InfoAdicional" />
-                    <outputColumn
-                      refId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de error de origen de OLE DB].Columns[Observaciones]"
-                      dataType="wstr"
-                      length="500"
-                      lineageId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de error de origen de OLE DB].Columns[Observaciones]"
-                      name="Observaciones" />
-                    <outputColumn
                       refId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de error de origen de OLE DB].Columns[ErrorCode]"
                       dataType="i4"
                       lineageId="Package\Tarea Integrar datos Polizas\Origen de OLE DB.Outputs[Salida de error de origen de OLE DB].Columns[ErrorCode]"
@@ -612,9 +590,12 @@ ON P.Id_pv = Ext.Id_pv</property>
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
       DTS:ThreadHint="0">
       <DTS:Variables />
+      <DTS:PropertyExpression
+        DTS:Name="Connection">"Provider=SQLOLEDB;Data Source=DESKTOP-O7N0ROR;Initial Catalog=PruebasMigracion2;User ID=sqluser;Password=skf9nfi7;Persist Security Info=True;"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{95B54F1B-E488-4C47-8CE0-33C2C9BFC39D}"
+          SQLTask:Connection="Provider=SQLOLEDB;Data Source=DESKTOP-O7N0ROR;Initial Catalog=PruebasMigracion2;User ID=sqluser;Password=skf9nfi7;Persist Security Info=True;"
+          SQLTask:BypassPrepare="False"
           SQLTask:SqlStmtSourceType="FileConnection"
           SQLTask:SqlStatementSource="dbo.Polizas.sql" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>

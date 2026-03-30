@@ -3,7 +3,6 @@ using Engine.Hubs;
 using Infrastructure.Config;
 using Infrastructure.DTOs;
 using Microsoft.AspNetCore.SignalR;
-//using MigrationExecutor.WebAPI.Hubs;
 
 namespace Engine.Extensions
 {
@@ -32,13 +31,13 @@ namespace Engine.Extensions
         /// Ejecuta todos los pasos de un MigrationJob
         /// Cada paso se registra en su correspondiente -> LogEntry
         public static List<LogEntry> EjecutarPasos(MigrationJob job, List<LogEntry> logs,
-            IHubContext<MigrationHub> hubContext //Hub
+            IHubContext<MigrationHub> hubContext, MigrationConfig config
             )
         {
             for (int i = 0; i < job.Pasos.Count; i++)
             {
                 var step = job.Pasos[i];
-                logs[i] = EjecutarPaso(step, logs[i]);
+                logs[i] = EjecutarPaso(step, logs[i], config);
 
                 var porcentaje = (i + 1) * 100 / job.Pasos.Count;
                 // Enviar al Hub
@@ -99,7 +98,7 @@ namespace Engine.Extensions
             return logEntry;
         }
         */
-        private static LogEntry EjecutarPaso(MigrationStep step, LogEntry logEntry)
+        private static LogEntry EjecutarPaso(MigrationStep step, LogEntry logEntry, MigrationConfig config)
         {
             step.Inicio = DateTime.Now;
             logEntry.Inicio = step.Inicio;
@@ -109,7 +108,7 @@ namespace Engine.Extensions
                 // === Aquí se ejecutaría el paquete SSIS real ===
                 // Por ejemplo, usando DTExec u otra API interna
                 // step.RutaPaquete tiene la ruta del .dtsx a ejecutar
-                EjecutarPaqueteETL(step.RutaPaquete); // <-- tu función real de ejecución ETL
+                EjecutarPaqueteETL(step.RutaPaquete, config); // <-- tu función real de ejecución ETL
 
                 step.Exito = true;
                 step.Mensaje = "Paso ejecutado correctamente";
@@ -140,14 +139,37 @@ namespace Engine.Extensions
 
             return logEntry;
         }
-        private static void EjecutarPaqueteETL(string rutaPaquete)
+        /*
+        private static void EjecutarPaqueteETL(string rutaPaquete, MigrationConfig config)
         {
             if (string.IsNullOrWhiteSpace(rutaPaquete) || !File.Exists(rutaPaquete))
                 throw new FileNotFoundException($"No se encontró el paquete: {rutaPaquete}");
 
             var proceso = new System.Diagnostics.Process();
+
             proceso.StartInfo.FileName = "dtexec.exe"; // Ejecutable de SSIS
-            proceso.StartInfo.Arguments = $"/F \"{rutaPaquete}\""; // Ruta del paquete
+
+            // --- Crear archivos .conmgr temporales ---
+            string tempSourceConMgr = Path.Combine(Path.GetTempPath(), $"BDSource_{Guid.NewGuid()}.conmgr");
+            string tempDestConMgr = Path.Combine(Path.GetTempPath(), $"DestinationDB_{Guid.NewGuid()}.conmgr");
+
+            File.Copy(Path.Combine(Path.GetDirectoryName(rutaPaquete)!, "SourceDB.conmgr"), tempSourceConMgr, true);
+            File.Copy(Path.Combine(Path.GetDirectoryName(rutaPaquete)!, "DestinationDB.conmgr"), tempDestConMgr, true);
+
+            // Reemplazar cadenas de conexión dentro de los .conmgr
+            File.WriteAllText(tempSourceConMgr,
+            File.ReadAllText(tempSourceConMgr).Replace("Data Source=.*?;", config.SourceDB)); // Ajusta patrón si es necesario
+            File.WriteAllText(tempDestConMgr,
+            File.ReadAllText(tempDestConMgr).Replace("Data Source=.*?;", config.DestinationDB));
+
+            // --- Ejecutar el paquete con DTExec ---
+            proceso.StartInfo.Arguments =
+                $"/F \"{rutaPaquete}\" " +
+                $"/ConnMgrFile \"{tempSourceConMgr}\" " +
+                $"/ConnMgrFile \"{tempDestConMgr}\"";
+
+            //proceso.StartInfo.Arguments = $"/F \"{rutaPaquete}\""; // Ruta del paquete
+
             proceso.StartInfo.UseShellExecute = false;
             proceso.StartInfo.RedirectStandardOutput = true;
             proceso.StartInfo.RedirectStandardError = true;
@@ -162,7 +184,101 @@ namespace Engine.Extensions
 
             if (proceso.ExitCode != 0)
                 throw new Exception($"Error al ejecutar paquete: {error}\n{output}");
+        }*/
+        private static void EjecutarPaqueteETL(string rutaPaquete, MigrationConfig config)
+        {
+            if (string.IsNullOrWhiteSpace(rutaPaquete) || !File.Exists(rutaPaquete))
+                throw new FileNotFoundException($"No se encontró el paquete: {rutaPaquete}");
+
+            string carpetaPaquete = Path.GetDirectoryName(rutaPaquete)!;
+
+            // ======== Buscar archivos que contengan "Source" o "Destination" ========
+            /*
+            var sourceFiles = Directory.GetFiles(carpetaPaquete, "*Source*.conmgr");
+            var destFiles = Directory.GetFiles(carpetaPaquete, "*Destination*.conmgr");
+
+            if (sourceFiles.Length == 0)
+                throw new FileNotFoundException($"No se encontró ningún Connection Manager de origen en {carpetaPaquete}");
+
+            if (destFiles.Length == 0)
+                throw new FileNotFoundException($"No se encontró ningún Connection Manager de destino en {carpetaPaquete}");
+            
+
+            // Si hay varios, puedes tomar el primero o lanzar error según tu política
+            string sourceConMgrOriginal = sourceFiles[0];
+            string destConMgrOriginal = destFiles[0];
+            */
+
+            var proceso = new System.Diagnostics.Process();
+            proceso.StartInfo.FileName = @"C:\Program Files\Microsoft SQL Server\150\DTS\Binn\DTExec.exe";
+            //proceso.StartInfo.FileName = "dtexec.exe";
+            proceso.StartInfo.Arguments = $"/F \"{rutaPaquete}\"";
+            proceso.StartInfo.UseShellExecute = false;
+            proceso.StartInfo.RedirectStandardOutput = true;
+            proceso.StartInfo.RedirectStandardError = true;
+            proceso.StartInfo.CreateNoWindow = true;
+            proceso.Start();
+
+            /*
+            proceso.StartInfo.Arguments =
+                $"/F \"{rutaPaquete}\" " +
+                $"/SET \\Package.Connections[SourceDB].ConnectionString;\"{config.SourceDB}\" " +
+                $"/SET \\Package.Connections[DestinationDB].ConnectionString;\"{config.DestinationDB}\"";
+            */
+
+            /*
+            string EscapeForDTExec(string conn)
+            {
+                return conn.Replace("\"", "'"); // Reemplaza dobles por simples
+            }
+            proceso.StartInfo.Arguments =
+                $"/F \"{rutaPaquete}\" " +
+                $"/SET \\Package.Connections[SourceDB].ConnectionString;\"{EscapeForDTExec(config.SourceDB)}\" " +
+                $"/SET \\Package.Connections[DestinationDB].ConnectionString;\"{EscapeForDTExec(config.DestinationDB)}\"";
+            */
+            /*
+            string EscapeForDTExec(string conn) => conn.Replace("\"", "'");
+
+            proceso.StartInfo.Arguments =
+                $"/F \"{rutaPaquete}\" " +
+                $"/SET \\Package.Connections[SourceDB].ConnectionString;\"{EscapeForDTExec(config.SourceDB)}\" " +
+                $"/SET \\Package.Connections[DestinationDB].ConnectionString;\"{EscapeForDTExec(config.DestinationDB)}\"";
+            */
+
+            /*
+            string EscapeForDTExec(string conn) => conn.Replace("\"", "'");
+
+            proceso.StartInfo.Arguments =
+                "/F \"" + rutaPaquete + "\" " +
+                "/SET \\Package.Connections[SourceDB].ConnectionString;\"" + EscapeForDTExec(config.SourceDB) + "\" " +
+                "/SET \\Package.Connections[DestinationDB].ConnectionString;\"" + EscapeForDTExec(config.DestinationDB) + "\"";
+            */
+            /*
+            string EscapeForDTExec(string conn)
+            {
+                return conn.Replace("\"", "\\\""); // Escapa comillas dobles
+            }
+
+            proceso.StartInfo.Arguments =
+                $"/F \"{rutaPaquete}\" " +
+                $"/SET \\Package.Connections[SourceDB].Properties[ConnectionString];\"{EscapeForDTExec(config.SourceDB)}\" " +
+                $"/SET \\Package.Connections[DestinationDB].Properties[ConnectionString];\"{EscapeForDTExec(config.DestinationDB)}\"";
+
+
+            proceso.StartInfo.Arguments = $"/F \"{rutaPaquete}\"";
+            */
+
+            string output = proceso.StandardOutput.ReadToEnd();
+            string error = proceso.StandardError.ReadToEnd();
+
+            proceso.WaitForExit();
+
+
+            if (proceso.ExitCode != 0)
+                throw new Exception($"Error al ejecutar paquete: {error}\n{output}");
         }
+
+
 
 
         /// Crea un MigrationJob a partir de una carpeta que contiene paquetes SSIS (*.dtsx).

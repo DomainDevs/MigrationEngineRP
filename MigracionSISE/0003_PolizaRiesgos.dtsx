@@ -12,8 +12,8 @@
   DTS:MaxErrorCount="10"
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
-  DTS:VersionBuild="7"
-  DTS:VersionGUID="{DD242828-AC3A-4921-9B53-B9F331CEB7EA}">
+  DTS:VersionBuild="11"
+  DTS:VersionGUID="{B889B799-499C-4AEC-B55A-D9CA425F00F2}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -25,6 +25,40 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:ConnectionString="C:\Devs\Core\SISTRAN\MIG1\Sistran.MigrationEngine\Scripts\dbo.PolizaRiesgos.sql" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PRUEBAS.sqluser]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{443B17D8-4DC3-4280-9D54-FDE91D44877B}"
+      DTS:ObjectName="DESKTOP-O7N0ROR.PRUEBAS.sqluser">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=DESKTOP-O7N0ROR;User ID=sqluser;Initial Catalog=PRUEBAS;Provider=SQLNCLI11.1;Application Name=SSIS-Package1-{443B17D8-4DC3-4280-9D54-FDE91D44877B}DESKTOP-O7N0ROR.PRUEBAS.sqluser;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAqeJUbC8LZ0KU9DBioXLbfQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACs7DpaeDVS6vKtuJgFMQyfwfRmyehBogak4wo6Kbw3rwAAAAAOgAAAAAIAACAAAABJke9yyXP5aOCbLoRpyNq6Es7dmFOCLqMICLcr7npdQyAAAABuK+URYOGV1HUCbOW+nC/Colg7hEzVOk4+GDpBGeQGPEAAAACsNI11ZMIoRaUp8V6TN1jXl8TsP6tHToK0GHyg3cUxwA5q8kQdl9oJk5mubIZErpj/WOwWtYPACZfJChhBuQal</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{9733503B-C99F-47C8-BB30-9D022A831A37}"
+      DTS:ObjectName="DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=DESKTOP-O7N0ROR;User ID=sqluser;Initial Catalog=PruebasMigracion2;Provider=SQLNCLI11.1;Application Name=SSIS-Package1-{9733503B-C99F-47C8-BB30-9D022A831A37}DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAqeJUbC8LZ0KU9DBioXLbfQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAABzwcIv7MaC4c+Xhho2KTG+A6KvP5e6kz0NkA6Xlz+xnwAAAAAOgAAAAAIAACAAAAD5OFSQOGtWxPkuz6bOCjL+9pz9ouTqrLof/Nt4tthtryAAAACgvp46TQQijBcE7wb7ZCcJPw+K+1H1OW0+ZAytKEMV4EAAAACPXi+9ntFAifCCdS/E8ofG8nH45duV+TDpImSQzBfBOp07fX/coXtVYOjtoZxjvnO/N0PUFP9EsjVmw5rT8d/+</DTS:Password>
+        </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
   </DTS:ConnectionManagers>
@@ -103,8 +137,8 @@
               <connections>
                 <connection
                   refId="Package\Tarea Flujo de datos PolizaRiesgos\Destino de OLE DB.Connections[OleDbConnection]"
-                  connectionManagerID="{95B54F1B-E488-4C47-8CE0-33C2C9BFC39D}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[DestinationDB]"
+                  connectionManagerID="Package.ConnectionManagers[DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1]"
+                  connectionManagerRefId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1]"
                   description="La conexión de tiempo de ejecución OLE DB usada para obtener acceso a la base de datos."
                   name="OleDbConnection" />
               </connections>
@@ -270,8 +304,8 @@
               <connections>
                 <connection
                   refId="Package\Tarea Flujo de datos PolizaRiesgos\Origen de OLE DB.Connections[OleDbConnection]"
-                  connectionManagerID="{62BC3112-48C7-4BFA-977A-A81413B42F75}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[BDSource]"
+                  connectionManagerID="Package.ConnectionManagers[DESKTOP-O7N0ROR.PRUEBAS.sqluser]"
+                  connectionManagerRefId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PRUEBAS.sqluser]"
                   description="La conexión de tiempo de ejecución OLE DB usada para obtener acceso a la base de datos."
                   name="OleDbConnection" />
               </connections>
@@ -457,7 +491,7 @@
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{95B54F1B-E488-4C47-8CE0-33C2C9BFC39D}"
+          SQLTask:Connection="{9733503B-C99F-47C8-BB30-9D022A831A37}"
           SQLTask:SqlStmtSourceType="FileConnection"
           SQLTask:SqlStatementSource="dbo.PolizaRiesgos.sql" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
@@ -486,13 +520,13 @@
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="225,51"
-          Id="Package\Tarea SQL Create Table PolizasRiesgos"
-          TopLeft="200,92" />
-        <NodeLayout
           Size="252,42"
           Id="Package\Tarea Flujo de datos PolizaRiesgos"
           TopLeft="186,173" />
+        <NodeLayout
+          Size="225,51"
+          Id="Package\Tarea SQL Create Table PolizasRiesgos"
+          TopLeft="200,92" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Restricción]"
           TopLeft="312.25,143">
@@ -569,7 +603,7 @@
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\Tarea Flujo de datos PolizaRiesgos\Origen de OLE DB">
+    design-time-name="Package\Tarea Flujo de datos PolizaRiesgos\Destino de OLE DB">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -582,7 +616,7 @@
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\Tarea Flujo de datos PolizaRiesgos\Destino de OLE DB">
+    design-time-name="Package\Tarea Flujo de datos PolizaRiesgos\Origen de OLE DB">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>

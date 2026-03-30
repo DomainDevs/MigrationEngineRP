@@ -11,10 +11,46 @@
   DTS:LocaleID="8192"
   DTS:ObjectName="Package"
   DTS:PackageType="5"
-  DTS:VersionBuild="32"
-  DTS:VersionGUID="{D95367D8-F31E-4C03-9E53-855900E6D8AB}">
+  DTS:VersionBuild="55"
+  DTS:VersionGUID="{5203A59B-D383-4F92-AD37-35E178ABFD4D}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PRUEBAS.sqluser]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{6A730C81-04EC-4818-9A2E-238FBCF48E80}"
+      DTS:ObjectName="DESKTOP-O7N0ROR.PRUEBAS.sqluser">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=DESKTOP-O7N0ROR;User ID=sqluser;Initial Catalog=PRUEBAS;Provider=SQLNCLI11.1;Application Name=SSIS-Package-{6A730C81-04EC-4818-9A2E-238FBCF48E80}DESKTOP-O7N0ROR.PRUEBAS.sqluser;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAqeJUbC8LZ0KU9DBioXLbfQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAAwnoKHPLCYpb51lEpn/RFQb9iwA8mcHZIcQYgH87R7pQAAAAAOgAAAAAIAACAAAADae/lJ/pb9+a3PJkMsEvjONBNMLG8ZHW+V/I3WTXDDTSAAAAApdrS6Lk0O7h22VKqys4kxw1d2HowPNRFna66/gSk/KEAAAADL6jVAhYObrLPWDHh8U3GMDZP1Qop2Jea1vTEfOJ1F2+edn34vCDfot3ADNtkTHNhOlXAAIq6ZOKMRREcxGdwR</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{A1471113-4581-497A-8E04-0DB09E8AD785}"
+      DTS:ObjectName="DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=DESKTOP-O7N0ROR;User ID=sqluser;Initial Catalog=PruebasMigracion2;Provider=SQLNCLI11.1;Application Name=SSIS-Package-{A1471113-4581-497A-8E04-0DB09E8AD785}DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAqeJUbC8LZ0KU9DBioXLbfQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACM/JyK9EVn16hIgktO/asK3s5rTPGgNSsqzE+6k3wiCgAAAAAOgAAAAAIAACAAAAA/1X16VFq1ewK7YZUgvny4h0etFWwd1ZXxEUIRoOYdvCAAAACozYVYHF9ACzxJaYMUZdhJOA8RY3JNhFVIlrFb7QAbHUAAAABS7ROVt+xZT+QTQmOiL0tT6siAIW154sAgCewt4zU4k/NfMyKTrP8QZXNPCBXdtsePZ2kqvLdO67kaGwLHSonU</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
   <DTS:Variables />
   <DTS:Executables>
     <DTS:Executable
@@ -191,8 +227,8 @@
               <connections>
                 <connection
                   refId="Package\Tarea Integrar datos Clientes\Destino de OLE DB Clientes.Connections[OleDbConnection]"
-                  connectionManagerID="{95B54F1B-E488-4C47-8CE0-33C2C9BFC39D}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[DestinationDB]"
+                  connectionManagerID="Package.ConnectionManagers[DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1]"
+                  connectionManagerRefId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PruebasMigracion2.sqluser1]"
                   description="La conexión de tiempo de ejecución OLE DB usada para obtener acceso a la base de datos."
                   name="OleDbConnection" />
               </connections>
@@ -346,8 +382,8 @@
               <connections>
                 <connection
                   refId="Package\Tarea Integrar datos Clientes\Origen de OLE DB Clientes.Connections[OleDbConnection]"
-                  connectionManagerID="{62BC3112-48C7-4BFA-977A-A81413B42F75}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[BDSource]"
+                  connectionManagerID="Package.ConnectionManagers[DESKTOP-O7N0ROR.PRUEBAS.sqluser]"
+                  connectionManagerRefId="Package.ConnectionManagers[DESKTOP-O7N0ROR.PRUEBAS.sqluser]"
                   description="La conexión de tiempo de ejecución OLE DB usada para obtener acceso a la base de datos."
                   name="OleDbConnection" />
               </connections>

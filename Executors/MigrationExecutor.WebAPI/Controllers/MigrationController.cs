@@ -27,7 +27,7 @@ public class MigrationController : ControllerBase
     public IActionResult EjecutarJobDesdeCarpeta([FromBody] JobRequest request)
     {
         try
-        {
+         {
             _migrationService.EjecutarJobDesdeCarpeta(
                 nombreJob: request.Nombre,
                 carpetaPaquetes: _config.CarpetaPaquetes,

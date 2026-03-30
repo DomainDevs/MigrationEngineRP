@@ -1,2 +1,45 @@
 ﻿<?xml version="1.0"?>
-<SSIS:Parameters xmlns:SSIS="www.microsoft.com/SqlServer/SSIS" />
+<SSIS:Parameters xmlns:SSIS="www.microsoft.com/SqlServer/SSIS">
+  <SSIS:Parameter
+    SSIS:Name="SourceDB">
+    <SSIS:Properties>
+      <SSIS:Property
+        SSIS:Name="ID">{1ffb0fee-1679-43aa-8d24-1a289c4820dd}</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="CreationName"></SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="Description">Base de datos Origen</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="Required">1</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="Sensitive">0</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="Value">"Provider=SQLOLEDB;Data Source=DESKTOP-O7N0ROR;Initial Catalog=PRUEBAS;User ID=sqluser;Password=skf9nfi7;Persist Security Info=True;"</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="DataType">18</SSIS:Property>
+    </SSIS:Properties>
+  </SSIS:Parameter>
+  <SSIS:Parameter
+    SSIS:Name="DestinationDB">
+    <SSIS:Properties>
+      <SSIS:Property
+        SSIS:Name="ID">{5768864d-2bc2-4f02-a838-8d3a0e665280}</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="CreationName"></SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="Description">Base de datos Destino</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="Required">1</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="Sensitive">0</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="Value">"Provider=SQLOLEDB;Data Source=DESKTOP-O7N0ROR;Initial Catalog=PruebasMigracion2;User ID=sqluser;Password=skf9nfi7;Persist Security Info=True;"</SSIS:Property>
+      <SSIS:Property
+        SSIS:Name="DataType">18</SSIS:Property>
+    </SSIS:Properties>
+  </SSIS:Parameter>
+</SSIS:Parameters>
