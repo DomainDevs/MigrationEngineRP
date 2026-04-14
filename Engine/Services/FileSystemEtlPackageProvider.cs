@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Engine.Interface;
 using Infrastructure.Config;
+using Microsoft.Extensions.Options;
 
 namespace Engine.Services;
 
@@ -8,9 +9,9 @@ public class FileSystemEtlPackageProvider : IEtlPackageProvider
 {
     private readonly MigrationConfig _config;
 
-    public FileSystemEtlPackageProvider(MigrationConfig config)
+    public FileSystemEtlPackageProvider(IOptions<MigrationConfig> config)
     {
-        _config = config;
+        _config = config.Value;
     }
 
     public IEnumerable<EtlPackageInfo> GetPackages()
