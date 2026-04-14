@@ -22,9 +22,10 @@ public static class AddEngineExtension
     public static IServiceCollection AddEngineServices(this IServiceCollection services, IConfiguration config, string rutaLogs)
     {
 
-        // Configuración strongly typed
-        services.Configure<MigrationConfig>(config.GetSection("MigrationConfig"));
 
+
+        // Configuración strongly typed
+        //services.Configure<MigrationConfig>(config.GetSection("MigrationConfig"));
         // Providers
         //services.AddScoped<IEtlPackageProvider, FileSystemEtlPackageProvider>();
 
@@ -41,6 +42,9 @@ public static class AddEngineExtension
             var hubContext = sp.GetRequiredService<IHubContext<MigrationHub>>(); // <--- inyección
             return new Services.MigrationService(mdWriter, jsonWriter, rutaLogs, migrationConfig, hubContext);
         });
+
+        services.Configure<MigrationConfig>(config.GetSection("MigrationConfig"));
+        services.AddScoped<IEtlPackageProvider, FileSystemEtlPackageProvider>();
 
         return services;
     }
