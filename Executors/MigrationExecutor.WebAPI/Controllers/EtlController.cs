@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Engine.Interface;
+using Microsoft.AspNetCore.Mvc;
+
+
+namespace MigrationExecutor.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/etl")]
 public class EtlController : ControllerBase
 {
-    private readonly string _path = Path.Combine(Directory.GetCurrentDirectory(), "etl-packages");
+    private readonly IEtlPackageProvider _provider;
+
+    public EtlController(IEtlPackageProvider provider)
+    {
+        _provider = provider;
+    }
 
     [HttpGet("files")]
     public IActionResult GetEtlFiles()
     {
-        var files = Directory.GetFiles(_path, "*.dtsx")
-            .Select(f => new
-            {
-                Name = Path.GetFileName(f),
-                Path = f
-            });
-
-        return Ok(files);
+        return Ok(_provider.GetPackages());
     }
 }
