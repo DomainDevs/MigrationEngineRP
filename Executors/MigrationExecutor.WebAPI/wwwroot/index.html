@@ -81,6 +81,7 @@
 
                 <nav class="hidden md:flex gap-6 text-sm text-gray-600">
                     <a href="./swagger">Swagger</a>
+                    <a href="./swagger">List ETL Files</a>
                 </nav>
 
                 <div class="flex gap-3 relative">
@@ -364,7 +365,9 @@
 
         // Evento que el Hub envía
         connection.on("RecibirProgreso", (jobId, porcentaje, nombrePaso) => {
-            console.log(`[Cliente] Progreso recibido: ${porcentaje}% - ${nombrePaso}`);
+            
+        
+        (`[Cliente] Progreso recibido: ${porcentaje}% - ${nombrePaso}`);
 
             const progressBar = document.getElementById("progressBar");
             const progressText = document.getElementById("progressText");
