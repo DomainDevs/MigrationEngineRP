@@ -13,56 +13,116 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
+<style>
 
-        body {
-            font-family: 'Inter',sans-serif;
-        }
+    body {
+        font-family: 'Inter', sans-serif;
+        background: radial-gradient(circle at top, #0b2454 0%, #081a3d 100%);
+    }
 
-        .bg-grid {
-            background-color: #f8fafc;
-            background-image: linear-gradient(#e5e7eb 1px,transparent 1px), linear-gradient(90deg,#e5e7eb 1px,transparent 1px);
-            background-size: 40px 40px;
-        }
+    .bg-grid {
+        background-color: #f8fafc;
+        background-image: linear-gradient(#e5e7eb 1px,transparent 1px),
+                          linear-gradient(90deg,#e5e7eb 1px,transparent 1px);
+        background-size: 40px 40px;
+    }
 
-        .card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 1px 2px rgba(0,0,0,.05);
-            transition: all .2s;
-        }
+    /* MAIN WRAPPER */
+    .max-w-7xl {
+        box-shadow: 0 30px 90px rgba(0,0,0,0.35);
+        border-radius: 14px;
+    }
 
-            .card:hover {
-                box-shadow: 0 8px 20px rgba(0,0,0,.05);
-            }
+    /* CARDS (MISMA ESTRUCTURA, SOLO LOOK PREMIUM) */
+    .card {
+        background: rgba(255,255,255,0.96);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+        transition: all .2s ease;
+        backdrop-filter: blur(6px);
+    }
 
-        #pingStatus {
-            position: fixed !important;
-            top: 100px;
-            right: 200px;
-            z-index: 9999;
-        }
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 45px rgba(0,0,0,0.10);
+    }
 
-        .fade-out {
-            animation: fadeOut 3s ease forwards;
-        }
+    /* HEADER LEFT BLUE (NO TOCAR COLOR ORIGINAL) */
+    .bg-\[\#0b2555\] {
+        background: #0b2454 !important;
+    }
 
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-            }
+    /* PRIMARY TEXT BLUE CONSISTENCY */
+    .text-\[\#0b2555\] {
+        color: #0b2454 !important;
+    }
 
-            70% {
-                opacity: 1;
-            }
+    /* BUTTON FEEL IMPROVEMENT (sin romper clases existentes) */
+    button {
+        transition: all .15s ease;
+    }
 
-            100% {
-                opacity: 0;
-            }
-        }
-    </style>
+    button:hover {
+        transform: translateY(-1px);
+    }
+
+    /* INPUT AREA IMPROVEMENT (SIN CAMBIAR IDs) */
+    textarea {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 10px !important;
+    }
+
+    textarea:focus {
+        outline: none;
+        border-color: rgba(11,36,84,0.35) !important;
+        box-shadow: 0 0 0 4px rgba(11,36,84,0.10);
+    }
+
+    /* PROGRESS BAR MODERN */
+    #progressBar {
+        background: linear-gradient(90deg, #0b2454, #1d4ed8);
+        border-radius: 999px;
+    }
+
+    /* LOG ITEMS HOVER SOFT */
+    #migrationList li {
+        transition: .15s ease;
+    }
+
+    #migrationList li:hover {
+        transform: scale(1.01);
+        background: #ffffff !important;
+    }
+
+    /* PING STATUS (IMPORTANTE: NO ROMPER FADE OUT) */
+    #pingStatus {
+        position: fixed !important;
+        top: 100px;
+        right: 200px;
+        z-index: 9999;
+
+        background: rgba(255,255,255,0.95);
+        border: 1px solid rgba(0,0,0,0.08);
+        padding: 8px 12px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        backdrop-filter: blur(10px);
+    }
+
+    .fade-out {
+        animation: fadeOut 3s ease forwards;
+    }
+
+    @keyframes fadeOut {
+        0% { opacity: 1; }
+        70% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+</style>
 </head>
 <body style="background-color: #0b2454;" class="min-h-screen p-2">
     <div class="max-w-7xl mx-auto bg-white rounded-md shadow-x overflow-hidden">
@@ -81,7 +141,7 @@
 
                 <nav class="hidden md:flex gap-6 text-sm text-gray-600">
                     <a href="./swagger">Swagger</a>
-                    <a href="./swagger">List ETL Files</a>
+                    <a href="./etl-management.html">List ETL Management</a>
                 </nav>
 
                 <div class="flex gap-3 relative">
